@@ -1,0 +1,39 @@
+<!-- app/src/main/res/layout/item_course.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/course_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Course Name: "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingTop="8dp" />
+
+    <TextView
+        android:id="@+id/type_of_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type of Class: "
+        android:paddingTop="4dp" />
+
+    <TextView
+        android:id="@+id/day_of_week"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Day of Week: "
+        android:paddingTop="4dp" />
+
+    <TextView
+        android:id="@+id/time_of_course"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time of Course: "
+        android:paddingTop="4dp" />
+
+</LinearLayout>

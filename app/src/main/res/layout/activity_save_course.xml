@@ -1,0 +1,109 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/course_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Course Name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:hint="Type of class" />
+
+    <RadioGroup
+        android:id="@+id/type_of_class_group"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/flow_yoga"
+            android:layout_width="123dp"
+            android:layout_height="wrap_content"
+            android:text="Flow Yoga" />
+
+        <RadioButton
+            android:id="@+id/aerial_yoga"
+            android:layout_width="123dp"
+            android:layout_height="wrap_content"
+            android:text="Aerial Yoga" />
+
+        <RadioButton
+            android:id="@+id/family_yoga"
+            android:layout_width="123dp"
+            android:layout_height="wrap_content"
+            android:text="Family Yoga" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:hint="Day of Week"
+        android:layout_marginTop="8dp"/>
+
+    <Spinner
+        android:id="@+id/day_of_week_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/dayOfWeek"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:hint="Time of Course"
+        android:layout_marginTop="8dp"/>
+
+    <TimePicker
+        android:id="@+id/time_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        android:layout_gravity="center_horizontal"/>
+
+    <EditText
+        android:id="@+id/duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Duration" />
+
+    <EditText
+        android:id="@+id/capacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Capacity" />
+
+    <EditText
+        android:id="@+id/price_per_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Price per Class" />
+
+    <EditText
+        android:id="@+id/skill_level"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Skill Level" />
+
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Course" />
+</LinearLayout>
