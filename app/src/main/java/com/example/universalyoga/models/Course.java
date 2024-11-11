@@ -104,7 +104,7 @@ public class Course {
     }
 
     // Setters
-    public void setCourseId(int id) {
+    public void setCourseId(int courseId) {
         this.courseId = courseId;
     }
 
@@ -142,22 +142,5 @@ public class Course {
 
     public void setSkillLevel(String skillLevel) {
         this.skillLevel = skillLevel;
-    }
-
-
-    public enum dayOfWeek {
-        MONDAY,
-        TUESDAY,
-        WEDNESDAY,
-        THURSDAY,
-        FRIDAY,
-        SATURDAY,
-        SUNDAY
-    }
-
-    public enum typeOfClass{
-        FlowYoga,
-        AerialYoga,
-        FamilyYoga
     }
 }

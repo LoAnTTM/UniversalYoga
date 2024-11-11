@@ -7,19 +7,41 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/date_edit"
+        android:id="@+id/date_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Date"/>
-<!--        android:focusable="false"/>-->
-<!--        android:clickable="true"/>-->
+        android:hint="Date"
+        android:focusable="false"
+        android:clickable="true"/>
 
-    <EditText
-        android:id="@+id/type_of_class_edit"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type of Class"
+        android:layout_marginTop="8dp"/>
+
+    <RadioGroup
+        android:id="@+id/type_of_class_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Teacher Name"
-        android:layout_marginTop="8dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp">
+
+        <RadioButton
+            android:id="@+id/online_class"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Online"/>
+
+        <RadioButton
+            android:id="@+id/offline_class"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Offline"/>
+
+    </RadioGroup>
 
     <EditText
         android:id="@+id/teacher_edit"

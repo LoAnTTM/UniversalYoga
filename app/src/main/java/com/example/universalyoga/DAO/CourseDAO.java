@@ -17,14 +17,14 @@ public interface CourseDAO {
     long insertCourse(Course course);
 
     @Update
-    void updateCourse(Course yogaCourse);
+    void updateCourse(Course course);
 
     @Delete
-    void deleteCourse(Course yogaCourse);
+    void deleteCourse(Course course);
 
     @Query("SELECT * FROM Courses")
     LiveData<List<Course>> getAllCourses();
 
     @Query("SELECT * FROM Courses WHERE courseId = :courseId")
-    LiveData<Course> getCoursesById(int courseId);
+    LiveData<Course> getCourseById(int courseId);
 }

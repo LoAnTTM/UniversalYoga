@@ -1,13 +1,10 @@
 <resources>
     <string name="app_name">UniversalYoga</string>
 
-    <string-array name="dayOfWeek">
-        <item>Monday</item>
-        <item>Tuesday</item>
-        <item>Wednesday</item>
-        <item>Thursday</item>
-        <item>Friday</item>
-        <item>Saturday</item>
-        <item>Sunday</item>
+    <string-array name="skill_levels">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+        <item>All Levels</item>
     </string-array>
 </resources>

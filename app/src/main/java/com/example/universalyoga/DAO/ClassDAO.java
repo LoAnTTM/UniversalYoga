@@ -13,7 +13,7 @@ import com.example.universalyoga.models.Class;
 @Dao
 public interface ClassDAO {
     @Insert
-    void insertClass(Class yogaClass);
+    long insertClass(Class yogaClass);
 
     @Update
     void updateClass(Class yogaClass);

@@ -1,109 +1,204 @@
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:fillViewport="true">
 
-    <EditText
-        android:id="@+id/course_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Course Name" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="1dp"
-        android:hint="Type of class" />
-
-    <RadioGroup
-        android:id="@+id/type_of_class_group"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/flow_yoga"
-            android:layout_width="123dp"
+        <EditText
+            android:id="@+id/course_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Flow Yoga" />
+            android:hint="Course Name" />
 
-        <RadioButton
-            android:id="@+id/aerial_yoga"
-            android:layout_width="123dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aerial Yoga" />
+            android:layout_marginLeft="1dp"
+            android:hint="Type of class" />
 
-        <RadioButton
-            android:id="@+id/family_yoga"
-            android:layout_width="123dp"
+        <RadioGroup
+            android:id="@+id/type_of_class_group"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/flow_yoga"
+                android:layout_width="123dp"
+                android:layout_height="wrap_content"
+                android:text="Flow Yoga" />
+
+            <RadioButton
+                android:id="@+id/aerial_yoga"
+                android:layout_width="123dp"
+                android:layout_height="wrap_content"
+                android:text="Aerial Yoga" />
+
+            <RadioButton
+                android:id="@+id/family_yoga"
+                android:layout_width="123dp"
+                android:layout_height="wrap_content"
+                android:text="Family Yoga" />
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Family Yoga" />
-    </RadioGroup>
+            android:hint="Description" />
 
-    <EditText
-        android:id="@+id/description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Description" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:hint="Day of Week"
+            android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="1dp"
-        android:hint="Day of Week"
-        android:layout_marginTop="8dp"/>
+            <!-- Replace the Spinner with this ChipGroup -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/day_of_week_chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
 
-    <Spinner
-        android:id="@+id/day_of_week_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/dayOfWeek"
-        android:layout_marginTop="4dp"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/monday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monday"
+                android:checkable="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="1dp"
-        android:hint="Time of Course"
-        android:layout_marginTop="8dp"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/tuesday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tuesday"
+                android:checkable="true"/>
 
-    <TimePicker
-        android:id="@+id/time_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:timePickerMode="spinner"
-        android:layout_gravity="center_horizontal"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/wednesday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wednesday"
+                android:checkable="true"/>
 
-    <EditText
-        android:id="@+id/duration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Duration" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/thursday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thursday"
+                android:checkable="true"/>
 
-    <EditText
-        android:id="@+id/capacity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Capacity" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/friday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friday"
+                android:checkable="true"/>
 
-    <EditText
-        android:id="@+id/price_per_class"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Price per Class" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/saturday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Saturday"
+                android:checkable="true"/>
 
-    <EditText
-        android:id="@+id/skill_level"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Skill Level" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sunday_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunday"
+                android:checkable="true"/>
 
+        </com.google.android.material.chip.ChipGroup>
 
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Course" />
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:hint="Time of Course"
+            android:layout_marginTop="8dp"/>
+
+        <TimePicker
+            android:id="@+id/time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:text="Duration (minutes)"
+            android:layout_marginTop="8dp"/>
+
+        <NumberPicker
+            android:id="@+id/duration_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:text="Capacity"
+            android:layout_marginTop="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp">
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/capacity_slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:valueFrom="5"
+                android:valueTo="100"
+                android:stepSize="5"/>
+
+            <TextView
+                android:id="@+id/capacity_value_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Selected:  people"/>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/price_per_class"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Price per Class" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:text="Skill Level"
+            android:layout_marginTop="8dp"/>
+
+        <Spinner
+            android:id="@+id/skill_level_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/skill_levels"
+            android:layout_marginTop="4dp"/>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Course" />
+    </LinearLayout>
+</ScrollView>

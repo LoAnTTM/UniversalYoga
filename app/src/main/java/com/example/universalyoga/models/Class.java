@@ -64,7 +64,7 @@ public class Class {
     }
 
     // Setters
-    public void setClassId(int id) {
+    public void setClassId(int classId) {
         this.classId = classId;
     }
 

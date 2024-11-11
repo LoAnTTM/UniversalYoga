@@ -1,12 +1,16 @@
 package com.example.universalyoga.activities;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 
 import com.example.universalyoga.R;
 import com.example.universalyoga.database.YogaDatabase;
@@ -16,7 +20,7 @@ public class DetailsClassActivity extends AppCompatActivity {
 
     private YogaDatabase database;
     private int classId;
-    private Class yogaClass;
+    private Class currentClass;
 
     private TextView classDateTextView, classTypeTextView, classTeacherTextView, classCommentsTextView;
     private Button editButton, deleteButton;
@@ -38,8 +42,8 @@ public class DetailsClassActivity extends AppCompatActivity {
         initializeViews();
         loadClassDetails(classId);
 
-        editButton.setOnClickListener(v -> editClass());
-        deleteButton.setOnClickListener(v -> deleteClass());
+        editButton.setOnClickListener(v -> editClass(currentClass));
+        deleteButton.setOnClickListener(v -> deleteClass(currentClass));
     }
 
     private void initializeViews() {
@@ -52,42 +56,42 @@ public class DetailsClassActivity extends AppCompatActivity {
     }
 
     private void loadClassDetails(int classId) {
-        new Thread(() -> {
-            try {
-                yogaClass = database.classDAO().getClassById(classId).getValue();
-                runOnUiThread(() -> {
-                    classDateTextView.setText(yogaClass.getDate());
-                    classTypeTextView.setText(yogaClass.getTypeOfClass());
-                    classTeacherTextView.setText(yogaClass.getTeacherName());
-                    classCommentsTextView.setText(yogaClass.getComments());
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error loading class: " + e.getMessage(), 
-                                    Toast.LENGTH_LONG).show();
-                });
+        LiveData<Class> classData = database.classDAO().getClassById(classId);
+        classData.observe(this, yogaClass -> {
+            if (yogaClass != null) {
+                currentClass = yogaClass;
+                displayClassDetails(yogaClass);
             }
-        }).start();
+        });
     }
 
-    private void editClass() {
+    private void displayClassDetails(Class yogaClass) {
+        classDateTextView.setText(String.format("Date: %s", yogaClass.getDate()));
+        classTypeTextView.setText(String.format("Type: %s", yogaClass.getTypeOfClass()));
+        classTeacherTextView.setText(String.format("Teacher: %s", yogaClass.getTeacherName()));
+        classCommentsTextView.setText(String.format("Comments: %s", 
+            yogaClass.getComments().isEmpty() ? "No Comments" : yogaClass.getComments()));
+    }
+
+    private void editClass(Class yogaClass) {
         Intent intent = new Intent(this, SaveClassActivity.class);
-        intent.putExtra("class_id", classId);
+        Log.d(TAG, "Opening course details for ID: " + yogaClass.getCourseId());
+        intent.putExtra("class_id", yogaClass.getClassId());
         startActivity(intent);
     }
 
-    private void deleteClass() {
+    private void deleteClass(Class yogaClass) {
         new Thread(() -> {
             try {
                 database.classDAO().deleteClass(yogaClass);
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Class deleted successfully", 
+                    Toast.makeText(this, "Class deleted successfully",
                                     Toast.LENGTH_SHORT).show();
                     finish();
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Error deleting class: " + e.getMessage(), 
+                    Toast.makeText(this, "Error deleting class: " + e.getMessage(),
                                     Toast.LENGTH_LONG).show();
                 });
             }

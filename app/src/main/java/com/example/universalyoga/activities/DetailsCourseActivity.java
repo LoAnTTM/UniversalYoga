@@ -1,5 +1,7 @@
 package com.example.universalyoga.activities;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -18,19 +20,20 @@ import com.example.universalyoga.adapters.ClassAdapter;
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Course;
 import com.example.universalyoga.models.Class;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DetailsCourseActivity extends AppCompatActivity {
     private static final String TAG = "DetailsCourseActivity";
 
     private TextView courseNameText, typeOfClassText, descriptionText, dayOfWeekText,
             timeOfCourseText, durationText, capacityText, priceText, skillLevelText;
+    private Button editButton, deleteButton;
     private YogaDatabase database;
     private Course currentCourse;
-    private int courseId;
 
     private RecyclerView classesRecyclerView;
     private ClassAdapter classAdapter;
-    private Button addClassButton;
+    private FloatingActionButton addClassButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,9 @@ public class DetailsCourseActivity extends AppCompatActivity {
             }
         }
 
+
+        editButton.setOnClickListener(v -> editCourse(currentCourse));
+        deleteButton.setOnClickListener(v -> deleteCourse(currentCourse));
     }
 
     private void initializeViews() {
@@ -69,18 +75,19 @@ public class DetailsCourseActivity extends AppCompatActivity {
         priceText = findViewById(R.id.price_text);
         skillLevelText = findViewById(R.id.skill_level_text);
 
-
         classesRecyclerView = findViewById(R.id.classes_recycler_view);
         classesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         classAdapter = new ClassAdapter(this::onClassClick);
         classesRecyclerView.setAdapter(classAdapter);
 
+        editButton = findViewById(R.id.edit_course_button);
+        deleteButton = findViewById(R.id.delete_course_button);
         addClassButton = findViewById(R.id.add_class_button);
-        addClassButton.setOnClickListener(v -> startAddClassActivity());
+        addClassButton.setOnClickListener(v -> startAddClassActivity(currentCourse));
     }
 
     private void loadCourseDetails(int courseId) {
-        LiveData<Course> courseData = database.courseDAO().getCoursesById(courseId);
+        LiveData<Course> courseData = database.courseDAO().getCourseById(courseId);
         courseData.observe(this, course -> {
             if (course != null) {
                 currentCourse = course;
@@ -89,7 +96,6 @@ public class DetailsCourseActivity extends AppCompatActivity {
             }
         });
     }
-    
 
     private void displayCourseDetails(Course course) {
         courseNameText.setText(String.format("Course Name: "+ course.getCourseName()));
@@ -103,7 +109,32 @@ public class DetailsCourseActivity extends AppCompatActivity {
         skillLevelText.setText(String.format("Skill Level: "+ course.getSkillLevel()));
     }
 
-    // Add these methods
+    private void editCourse(Course course) {
+        Intent intent = new Intent(this, SaveCourseActivity.class);
+        Log.d(TAG, "Edit course details for ID: " + course.getCourseId());
+        intent.putExtra("course_id", course.getCourseId());
+        startActivity(intent);
+    }
+
+    private void deleteCourse(Course course) {
+        new Thread(() -> {
+            try {
+                database.courseDAO().deleteCourse(course);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Course deleted successfully",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Error deleting course: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+    }
+
+    // Class --------------------------------------------------------------------------
     private void loadClassesForCourse(int courseId) {
         database.classDAO().getAllClasses(courseId).observe(this, classes -> {
             if (classes != null) {
@@ -112,10 +143,11 @@ public class DetailsCourseActivity extends AppCompatActivity {
         });
     }
 
-    private void startAddClassActivity() {
+    private void startAddClassActivity(Course course) {
         Intent intent = new Intent(this, SaveClassActivity.class);
-        intent.putExtra("course_id", courseId);
-        intent.putExtra("date_of_week", currentCourse.getDayOfWeek());
+        intent.putExtra("course_id", course.getCourseId());
+        Log.d(TAG, "Truyen courseID cho class: " + course.getCourseId());
+        // intent.putExtra("date_of_week", currentCourse.getDayOfWeek());
         startActivity(intent);
     }
 

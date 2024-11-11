@@ -1,88 +1,166 @@
 package com.example.universalyoga.activities;
 
+import static android.content.ContentValues.TAG;
+
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 
 import com.example.universalyoga.R;
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Class;
+import com.example.universalyoga.models.Course;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 public class SaveClassActivity extends AppCompatActivity {
-    private EditText dateEdit, typeOfClassEdit, teacherEdit, commentsEdit;
+    private EditText datePicker, teacherEdit, commentsEdit;
+    private RadioGroup typeOfClassGroup;
     private Button saveButton;
     private YogaDatabase database;
     private int courseId;
+    private Class currentClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_class);
 
-        courseId = getIntent().getIntExtra("course_id", -1);
+        database = YogaDatabase.getDatabase(this);
 
-        if (courseId == -1) {
-            Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+        // Initialize views
+        initializeViews();
+        setupDatePicker();
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("class_id")) {
+            int classId = intent.getIntExtra("class_id", -1);
+            if (classId != -1) {
+                database.classDAO().getClassById(classId).observe(this, yogaClass -> {
+                    if (yogaClass != null) {
+                        currentClass = yogaClass;
+                        courseId = yogaClass.getCourseId();
+                        datePicker.setText(yogaClass.getDate());
+                        teacherEdit.setText(yogaClass.getTeacherName());
+                        commentsEdit.setText(yogaClass.getComments());
+                        if ("Online".equals(yogaClass.getTypeOfClass())) {
+                            typeOfClassGroup.check(R.id.online_class);
+                        } else if ("Offline".equals(yogaClass.getTypeOfClass())) {
+                            typeOfClassGroup.check(R.id.offline_class);
+                        }
+                    }
+                });
+            }
+        } else if (intent.hasExtra("course_id")) {
+            courseId = intent.getIntExtra("course_id", -1);
+            Log.d(TAG, "Course ID tai Class: " + courseId);
+            if (courseId == -1) {
+                Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Error: Invalid parameters", Toast.LENGTH_SHORT).show();
         }
 
-        database = YogaDatabase.getDatabase(this);
-        initializeViews();
+        // Set up save button click listener
         saveButton.setOnClickListener(v -> validateAndSaveClass());
     }
 
     private void initializeViews() {
-        dateEdit = findViewById(R.id.date_edit);
-        typeOfClassEdit = findViewById(R.id.type_of_class_edit);
+        datePicker = findViewById(R.id.date_picker);
+        typeOfClassGroup = findViewById(R.id.type_of_class_group);
         teacherEdit = findViewById(R.id.teacher_edit);
         commentsEdit = findViewById(R.id.comments_edit);
         saveButton = findViewById(R.id.save_button);
+    }
 
-        // Add date picker for dateEdit
-        dateEdit.setOnClickListener(v -> showDatePicker());
+    private void setupDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH); 
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        datePicker.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                SaveClassActivity.this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    String formattedDate = String.format(Locale.US, "%02d-%02d-%04d",
+                        selectedDay, selectedMonth + 1, selectedYear);
+                    datePicker.setText(formattedDate);
+                },
+                year, month, day);
+            datePickerDialog.show();
+        });
+    }
+
+    private String getSelectedTypeOfClass() {
+        int selectedId = typeOfClassGroup.getCheckedRadioButtonId();
+        if (selectedId == R.id.online_class) {
+            return "Online";
+        } else if (selectedId == R.id.offline_class) {
+            return "Offline";
+        }
+        return "";
     }
 
     private void validateAndSaveClass() {
-        String dates = dateEdit.getText().toString().trim();
-        String typeOfClass = typeOfClassEdit.getText().toString().trim();
+        String date = datePicker.getText().toString().trim();
+        String typeOfClass = getSelectedTypeOfClass(); 
         String teacher = teacherEdit.getText().toString().trim();
         String comments = commentsEdit.getText().toString().trim();
 
-        if (dates.isEmpty() || typeOfClass.isEmpty() || teacher.isEmpty()) {
+        if (date.isEmpty() || typeOfClass.isEmpty() || teacher.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields",
                     Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Class newClass = new Class(courseId, dates, typeOfClass, teacher, comments);
-
-        new Thread(() -> {
-            try {
-                database.classDAO().insertClass(newClass);
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Class saved successfully", 
-                                    Toast.LENGTH_SHORT).show();
-                    finish();
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error saving class: " + e.getMessage(), 
-                                    Toast.LENGTH_LONG).show();
-                });
-            }
-        }).start();
-
-        Intent intent = new Intent(SaveClassActivity.this, DetailsClassActivity.class);
-        startActivity(intent);
+        if (currentClass == null) {
+            Log.d(TAG, "Current class: " + currentClass);
+            // Save new class
+            Class newClass = new Class(courseId, date, typeOfClass, teacher, comments);
+            new Thread(() -> {
+                try {
+                    database.classDAO().insertClass(newClass);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Class saved successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Error saving class: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+                }
+            }).start();
+        } else {
+            // Update existing class
+            currentClass.setDate(date);
+            currentClass.setTypeOfClass(typeOfClass);
+            currentClass.setTeacherName(teacher);
+            currentClass.setComments(comments);
+            new Thread(() -> {
+                try {
+                    database.classDAO().updateClass(currentClass);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Class updated successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Error updating class: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+                }
+            }).start();
+        }
     }
-
-    private void showDatePicker() {
-        // Implement date picker dialog
-    }
-
 }

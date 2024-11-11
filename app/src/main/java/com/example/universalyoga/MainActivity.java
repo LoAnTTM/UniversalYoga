@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity{
     private CourseAdapter courseAdapter;
     private YogaDatabase database;
     private FloatingActionButton addButton;
-    private List<Course> courses;
+    private List<Course> courses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity{
         // Initialize database
         database = YogaDatabase.getDatabase(this);
 
-         // Initialize RecyclerView
+         // Initialize RecyclerVicsew
          recyclerView = findViewById(R.id.recycler_view);
          recyclerView.setLayoutManager(new LinearLayoutManager(this));
          courseAdapter = new CourseAdapter(courses, this::onCourseClick);
@@ -54,8 +55,19 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void loadCourses() {
+//        database.courseDAO().getAllCourses().observe(this, new Observer<List<Course>>() {
+//            @Override
+//            public void onChanged(List<Course> courses) {
+//                if(courses != null){
+//                    courseAdapter.setCourses(courses);
+//                }
+//            }
+//        });
+
         database.courseDAO().getAllCourses().observe(this, courses -> {
-            courseAdapter.setCourses(courses);
+            if(courses != null) {
+                courseAdapter.setCourses(courses);
+            }
         });
     }
 
@@ -67,5 +79,4 @@ public class MainActivity extends AppCompatActivity{
             startActivity(intent);
         }
     }
-
 }
