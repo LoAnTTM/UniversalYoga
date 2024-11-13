@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "743668230361",
+    "firebase_url": "https://universalyoga-80d91-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "universalyoga-80d91",
+    "storage_bucket": "universalyoga-80d91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743668230361:android:e55187a3bec2cc95f2b6c8",
+        "android_client_info": {
+          "package_name": "com.example.universalyoga"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnGIFzVyrNAjzI2YNIaFKIrzUmV9qa6lI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
