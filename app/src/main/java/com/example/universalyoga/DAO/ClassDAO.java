@@ -21,8 +21,11 @@ public interface ClassDAO {
     @Delete
     void deleteClass(Class yogaClass);
 
+    @Query("SELECT * FROM classes")
+    LiveData<List<Class>> getAllClasses();
+
     @Query("SELECT * FROM classes WHERE course_id = :courseId")
-    LiveData<List<Class>> getAllClasses(int courseId);
+    LiveData<List<Class>> getAllClassesByCourseId(int courseId);
 
     @Query("SELECT * FROM classes WHERE classId = :classId")
     LiveData<Class> getClassById(int classId);

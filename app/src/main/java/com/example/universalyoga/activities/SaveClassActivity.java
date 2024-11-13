@@ -15,11 +15,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.universalyoga.R;
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Class;
 import com.example.universalyoga.models.Course;
+import com.example.universalyoga.viewmodels.ClassViewModel;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -28,7 +30,7 @@ public class SaveClassActivity extends AppCompatActivity {
     private EditText datePicker, teacherEdit, commentsEdit;
     private RadioGroup typeOfClassGroup;
     private Button saveButton;
-    private YogaDatabase database;
+    private ClassViewModel classViewModel;
     private int courseId;
     private Class currentClass;
 
@@ -37,7 +39,8 @@ public class SaveClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_class);
 
-        database = YogaDatabase.getDatabase(this);
+        // Initialize ViewModel
+        classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
 
         // Initialize views
         initializeViews();
@@ -47,7 +50,7 @@ public class SaveClassActivity extends AppCompatActivity {
         if (intent.hasExtra("class_id")) {
             int classId = intent.getIntExtra("class_id", -1);
             if (classId != -1) {
-                database.classDAO().getClassById(classId).observe(this, yogaClass -> {
+                classViewModel.getClass(classId).observe(this, yogaClass -> {
                     if (yogaClass != null) {
                         currentClass = yogaClass;
                         courseId = yogaClass.getCourseId();
@@ -129,38 +132,17 @@ public class SaveClassActivity extends AppCompatActivity {
             Log.d(TAG, "Current class: " + currentClass);
             // Save new class
             Class newClass = new Class(courseId, date, typeOfClass, teacher, comments);
-            new Thread(() -> {
-                try {
-                    database.classDAO().insertClass(newClass);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Class saved successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                } catch (Exception e) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Error saving class: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-                }
-            }).start();
+            classViewModel.saveClass(newClass);
+            Toast.makeText(this, "Class saved successfully", Toast.LENGTH_SHORT).show();
         } else {
             // Update existing class
             currentClass.setDate(date);
             currentClass.setTypeOfClass(typeOfClass);
             currentClass.setTeacherName(teacher);
             currentClass.setComments(comments);
-            new Thread(() -> {
-                try {
-                    database.classDAO().updateClass(currentClass);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Class updated successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                } catch (Exception e) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Error updating class: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-                }
-            }).start();
+            classViewModel.saveClass(currentClass);
+            Toast.makeText(this, "Class updated successfully", Toast.LENGTH_SHORT).show();
         }
+        finish();
     }
 }

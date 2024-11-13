@@ -9,16 +9,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.universalyoga.R;
-import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Class;
+import com.example.universalyoga.viewmodels.ClassViewModel;
 
 public class DetailsClassActivity extends AppCompatActivity {
-
-    private YogaDatabase database;
+    private static final String TAG = "DetailsClassActivity";
+    private ClassViewModel classViewModel;
     private int classId;
     private Class currentClass;
 
@@ -30,7 +32,8 @@ public class DetailsClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_class);
 
-        database = YogaDatabase.getDatabase(this);
+        // Initialize ViewModel
+        classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
 
         classId = getIntent().getIntExtra("class_id", -1);
         if (classId == -1) {
@@ -56,8 +59,7 @@ public class DetailsClassActivity extends AppCompatActivity {
     }
 
     private void loadClassDetails(int classId) {
-        LiveData<Class> classData = database.classDAO().getClassById(classId);
-        classData.observe(this, yogaClass -> {
+        classViewModel.getClass(classId).observe(this, yogaClass -> {
             if (yogaClass != null) {
                 currentClass = yogaClass;
                 displayClassDetails(yogaClass);
@@ -75,26 +77,21 @@ public class DetailsClassActivity extends AppCompatActivity {
 
     private void editClass(Class yogaClass) {
         Intent intent = new Intent(this, SaveClassActivity.class);
-        Log.d(TAG, "Opening course details for ID: " + yogaClass.getCourseId());
+        Log.d(TAG, "Opening course ID: " + yogaClass.getCourseId());
         intent.putExtra("class_id", yogaClass.getClassId());
         startActivity(intent);
     }
 
     private void deleteClass(Class yogaClass) {
-        new Thread(() -> {
-            try {
-                database.classDAO().deleteClass(yogaClass);
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Class deleted successfully",
-                                    Toast.LENGTH_SHORT).show();
-                    finish();
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error deleting class: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                });
-            }
-        }).start();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Delete");
+        builder.setMessage("Are you sure you want to delete this class?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            classViewModel.deleteClass(yogaClass);
+            Toast.makeText(this, "Class deleted successfully", Toast.LENGTH_SHORT).show();
+            finish();
+        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.universalyoga.utils;
+package com.example.universalyoga.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

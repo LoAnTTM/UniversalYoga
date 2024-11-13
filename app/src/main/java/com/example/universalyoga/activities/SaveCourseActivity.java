@@ -17,10 +17,12 @@ import java.util.Locale;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.universalyoga.R;
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Course;
+import com.example.universalyoga.viewmodels.CourseViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.slider.Slider;
@@ -36,6 +38,7 @@ public class SaveCourseActivity extends AppCompatActivity {
     private Spinner skillLevelSpinner;
     private Button saveButton;
     private YogaDatabase database;
+    private CourseViewModel courseViewModel;
     private Course currentCourse;
 
 
@@ -44,7 +47,6 @@ public class SaveCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_course);
 
-        // Initialize database
         database = YogaDatabase.getDatabase(this);
 
         // Initialize views
@@ -53,13 +55,16 @@ public class SaveCourseActivity extends AppCompatActivity {
         setupDurationPicker();
         setupCapacitySlider();
 
+        // Initialize ViewModel
+        courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
+
         // Get task data from the intent
         Intent intent = getIntent();
         if (intent.hasExtra("course_id")) {
             int courseId = intent.getIntExtra("course_id", -1);
             Log.d(TAG, "Received course ID: " + courseId);
             if (courseId != -1) {
-                database.courseDAO().getCourseById(courseId).observe(this, course -> {
+                courseViewModel.getCourse(courseId).observe(this, course -> {
                     if (course != null) {
                         currentCourse = course;
                         courseNameEdit.setText(course.getCourseName());
@@ -74,8 +79,6 @@ public class SaveCourseActivity extends AppCompatActivity {
                         timePicker.setHour(hour);
                         timePicker.setMinute(minute);
 
-                        // timePicker.setHour(course.getTimeOfCourse().split(":")[0]);
-                        // timePicker.setMinute(course.getTimeOfCourse().split(":")[1]);
                         durationPicker.setValue(course.getDuration());
                         capacitySlider.setValue(course.getCapacity());
                         capacityValueText.setText(String.valueOf(course.getCapacity()));
@@ -185,7 +188,7 @@ public class SaveCourseActivity extends AppCompatActivity {
         }
 
         if (currentCourse == null) {
-            // Save new class
+            //Save new course
             Course newCourse = new Course(
                     courseName,
                     typeOfClass,
@@ -214,7 +217,7 @@ public class SaveCourseActivity extends AppCompatActivity {
                 }
             }).start();
         } else {
-            // Update existing class
+            // Update existing course
             currentCourse.setCourseName(courseName);
             currentCourse.setTypeOfClass(typeOfClass);
             currentCourse.setDescription(description);
@@ -224,22 +227,12 @@ public class SaveCourseActivity extends AppCompatActivity {
             currentCourse.setCapacity(capacity);
             currentCourse.setPricePerClass(price);
             currentCourse.setSkillLevel(skillLevel);
-            new Thread(() -> {
-                try {
-                    database.courseDAO().updateCourse(currentCourse);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Course updated successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SaveCourseActivity.this, DetailsCourseActivity.class);
-                        intent.putExtra("course_id", currentCourse.getCourseId());
-                        startActivity(intent);
-                        finish();
-                    });
-                } catch (Exception e) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Error updating course: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-                }
-            }).start();
+            courseViewModel.saveCourse(currentCourse);
+            Toast.makeText(this, "Course updated successfully", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SaveCourseActivity.this, DetailsCourseActivity.class);
+            intent.putExtra("course_id", currentCourse.getCourseId());
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -284,6 +277,6 @@ public class SaveCourseActivity extends AppCompatActivity {
                 return i;
             }
         }
-        return 0; // Default to the first position if not found
+        return 0;
     }
 }

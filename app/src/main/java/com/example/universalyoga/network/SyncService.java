@@ -1,4 +1,4 @@
-package com.example.universalyoga.utils;
+package com.example.universalyoga.network;
 
 import android.content.Context;
 
@@ -54,5 +54,17 @@ public class SyncService {
                 }
             }
         });
+    }
+
+    public void deleteCourseFromFirebase(int courseId) {
+        if (NetworkUtils.isNetworkAvailable(context)) {
+            firebaseDatabase.child("courses").child(String.valueOf(courseId)).removeValue();
+        }
+    }
+
+    public void deleteClassFromFirebase(int classId) {
+        if (NetworkUtils.isNetworkAvailable(context)) {
+            firebaseDatabase.child("classes").child(String.valueOf(classId)).removeValue();
+        }
     }
 }

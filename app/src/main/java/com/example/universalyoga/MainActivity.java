@@ -3,12 +3,12 @@ package com.example.universalyoga;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,17 +17,22 @@ import com.example.universalyoga.activities.SaveCourseActivity;
 import com.example.universalyoga.adapters.CourseAdapter;
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Course;
+import com.example.universalyoga.network.NetworkReceiver;
+import com.example.universalyoga.network.SyncService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CourseAdapter courseAdapter;
     private YogaDatabase database;
     private FloatingActionButton addButton;
     private List<Course> courses = new ArrayList<>();
+
+    private NetworkReceiver networkReceiver;
+    private SyncService syncService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +42,20 @@ public class MainActivity extends AppCompatActivity{
         // Initialize database
         database = YogaDatabase.getDatabase(this);
 
-         // Initialize RecyclerVicsew
-         recyclerView = findViewById(R.id.recycler_view);
-         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-         courseAdapter = new CourseAdapter(courses, this::onCourseClick);
-         recyclerView.setAdapter(courseAdapter);
+        // Initialize sync service
+        syncService = SyncService.getInstance(this);
+
+        // Register network receiver
+        networkReceiver = new NetworkReceiver();
+        registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        syncService.syncData();
+
+        // Initialize RecyclerView
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        courseAdapter = new CourseAdapter(courses, this::onCourseClick);
+        recyclerView.setAdapter(courseAdapter);
 
         // Initialize Add Course Button
         addButton = findViewById(R.id.add_button);
@@ -65,7 +79,7 @@ public class MainActivity extends AppCompatActivity{
 //        });
 
         database.courseDAO().getAllCourses().observe(this, courses -> {
-            if(courses != null) {
+            if (courses != null) {
                 courseAdapter.setCourses(courses);
             }
         });
@@ -77,6 +91,15 @@ public class MainActivity extends AppCompatActivity{
             Intent intent = new Intent(this, DetailsCourseActivity.class);
             intent.putExtra("course_id", course.getCourseId());
             startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister receiver
+        if (networkReceiver != null) {
+            unregisterReceiver(networkReceiver);
         }
     }
 }

@@ -10,8 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,8 @@ import com.example.universalyoga.adapters.ClassAdapter;
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Course;
 import com.example.universalyoga.models.Class;
+import com.example.universalyoga.viewmodels.ClassViewModel;
+import com.example.universalyoga.viewmodels.CourseViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DetailsCourseActivity extends AppCompatActivity {
@@ -28,7 +32,8 @@ public class DetailsCourseActivity extends AppCompatActivity {
     private TextView courseNameText, typeOfClassText, descriptionText, dayOfWeekText,
             timeOfCourseText, durationText, capacityText, priceText, skillLevelText;
     private Button editButton, deleteButton;
-    private YogaDatabase database;
+    private CourseViewModel courseViewModel;
+    private ClassViewModel classViewModel;
     private Course currentCourse;
 
     private RecyclerView classesRecyclerView;
@@ -40,24 +45,25 @@ public class DetailsCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_course);
 
-        // Initialize database and executor
-        database = YogaDatabase.getDatabase(this);
-
         // Initialize views
         initializeViews();
 
-        // Get course ID from intent
-        Intent intent = getIntent();
-        if (intent.hasExtra("course_id")) {
-            int courseId = intent.getIntExtra("course_id", -1);
-            Log.d(TAG, "Received course ID: " + courseId);
-            if (courseId != -1) {
-                loadCourseDetails(courseId);
-            }else {
-                Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
+        // Initialize ViewModel
+        courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
+        classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
+
+         // Get course ID from intent
+         Intent intent = getIntent();
+         if (intent.hasExtra("course_id")) {
+             int courseId = intent.getIntExtra("course_id", -1);
+             Log.d(TAG, "Received course ID: " + courseId);
+             if (courseId != -1) {
+                 loadCourseDetails(courseId);
+             } else {
+                 Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
+                 finish();
+             }
+         }
 
 
         editButton.setOnClickListener(v -> editCourse(currentCourse));
@@ -87,8 +93,7 @@ public class DetailsCourseActivity extends AppCompatActivity {
     }
 
     private void loadCourseDetails(int courseId) {
-        LiveData<Course> courseData = database.courseDAO().getCourseById(courseId);
-        courseData.observe(this, course -> {
+        courseViewModel.getCourse(courseId).observe(this, course -> {
             if (course != null) {
                 currentCourse = course;
                 displayCourseDetails(course);
@@ -98,45 +103,40 @@ public class DetailsCourseActivity extends AppCompatActivity {
     }
 
     private void displayCourseDetails(Course course) {
-        courseNameText.setText(String.format("Course Name: "+ course.getCourseName()));
-        typeOfClassText.setText(String.format("Type of Class: "+ course.getTypeOfClass()));
-        descriptionText.setText(String.format("Description: "+ (course.getDescription().isEmpty() ? "No Description" : course.getDescription())));
-        dayOfWeekText.setText(String.format("Day of Week: "+ course.getDayOfWeek()));
-        timeOfCourseText.setText(String.format("Time of Course: "+ course.getTimeOfCourse()));
-        durationText.setText(String.format("Duration: "+ course.getDuration()));
-        capacityText.setText(String.format("Capacity: "+ course.getCapacity()));
-        priceText.setText(String.format("Price: £"+ course.getPricePerClass()));
-        skillLevelText.setText(String.format("Skill Level: "+ course.getSkillLevel()));
+        courseNameText.setText(String.format("Course Name: " + course.getCourseName()));
+        typeOfClassText.setText(String.format("Type of Class: " + course.getTypeOfClass()));
+        descriptionText.setText(String.format("Description: " + (course.getDescription().isEmpty() ? "No Description" : course.getDescription())));
+        dayOfWeekText.setText(String.format("Day of Week: " + course.getDayOfWeek()));
+        timeOfCourseText.setText(String.format("Time of Course: " + course.getTimeOfCourse()));
+        durationText.setText(String.format("Duration: " + course.getDuration()));
+        capacityText.setText(String.format("Capacity: " + course.getCapacity()));
+        priceText.setText(String.format("Price: £" + course.getPricePerClass()));
+        skillLevelText.setText(String.format("Skill Level: " + course.getSkillLevel()));
     }
 
     private void editCourse(Course course) {
         Intent intent = new Intent(this, SaveCourseActivity.class);
-        Log.d(TAG, "Edit course details for ID: " + course.getCourseId());
+        Log.d(TAG, "Opening course details for ID: " + course.getCourseId());
         intent.putExtra("course_id", course.getCourseId());
         startActivity(intent);
     }
 
     private void deleteCourse(Course course) {
-        new Thread(() -> {
-            try {
-                database.courseDAO().deleteCourse(course);
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Course deleted successfully",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error deleting course: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                });
-            }
-        }).start();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Delete");
+        builder.setMessage("Are you sure you want to delete this course?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            courseViewModel.deleteCourse(course);
+            Toast.makeText(this, "Course deleted successfully", Toast.LENGTH_SHORT).show();
+            finish();
+        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     // Class --------------------------------------------------------------------------
     private void loadClassesForCourse(int courseId) {
-        database.classDAO().getAllClasses(courseId).observe(this, classes -> {
+        classViewModel.getClassesByCourseId(courseId).observe(this, classes -> {
             if (classes != null) {
                 classAdapter.setClasses(classes);
             }
@@ -146,7 +146,6 @@ public class DetailsCourseActivity extends AppCompatActivity {
     private void startAddClassActivity(Course course) {
         Intent intent = new Intent(this, SaveClassActivity.class);
         intent.putExtra("course_id", course.getCourseId());
-        Log.d(TAG, "Truyen courseID cho class: " + course.getCourseId());
         // intent.putExtra("date_of_week", currentCourse.getDayOfWeek());
         startActivity(intent);
     }
