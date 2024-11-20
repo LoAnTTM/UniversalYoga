@@ -21,6 +21,9 @@ public interface ClassDAO {
     @Delete
     void deleteClass(Class yogaClass);
 
+    @Query("DELETE FROM classes")
+    void deleteAllClasses();
+
     @Query("SELECT * FROM classes")
     LiveData<List<Class>> getAllClasses();
 

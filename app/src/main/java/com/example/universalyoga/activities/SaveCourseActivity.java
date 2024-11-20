@@ -2,6 +2,7 @@ package com.example.universalyoga.activities;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import java.text.DecimalFormat;
 import java.util.Locale;
 import android.widget.Toast;
 
@@ -36,7 +39,7 @@ public class SaveCourseActivity extends AppCompatActivity {
     private Slider capacitySlider;
     private TextView capacityValueText;
     private Spinner skillLevelSpinner;
-    private Button saveButton;
+    private Button saveButton, cancelButton;
     private YogaDatabase database;
     private CourseViewModel courseViewModel;
     private Course currentCourse;
@@ -93,6 +96,14 @@ public class SaveCourseActivity extends AppCompatActivity {
 
         // Set up save button click listener
         saveButton.setOnClickListener(v -> validateAndSaveCourse());
+        cancelButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm Exit")
+                    .setMessage("Do you really want to leave without saving this course?")
+                    .setPositiveButton("Yes", (dialog, which) -> finish())
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .show();
+        });
     }
 
     private void initializeViews() {
@@ -107,6 +118,7 @@ public class SaveCourseActivity extends AppCompatActivity {
         pricePerClassEdit = findViewById(R.id.price_per_class);
         skillLevelSpinner = findViewById(R.id.skill_level_spinner);
         saveButton = findViewById(R.id.save_button);
+        cancelButton = findViewById(R.id.cancel_button);
     }
 
     private String getSelectedTypeOfClass() {
@@ -135,24 +147,22 @@ public class SaveCourseActivity extends AppCompatActivity {
     }
 
     private String getTimeFromPicker() {
-        // timePicker.setIs24HourView(true);
-
         int hour = timePicker.getHour();
         int minute = timePicker.getMinute();
-        
+
         // Convert 24 hour time to 12 hour format with AM/PM
         String amPm = hour >= 12 ? "PM" : "AM";
         int hour12 = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-        
+
         // Format time as hh:mm AM/PM
         return String.format(Locale.getDefault(), "%02d:%02d %s", hour12, minute, amPm);
     }
 
     private void setupDurationPicker() {
-        durationPicker.setMinValue(30);  
+        durationPicker.setMinValue(30);
         durationPicker.setMaxValue(180); // (3 hours)
         durationPicker.setValue(60);
-        
+
         // Set step size to 15 minutes
         durationPicker.setFormatter(value -> String.format("%d min", value));
     }
@@ -160,7 +170,7 @@ public class SaveCourseActivity extends AppCompatActivity {
     private void setupCapacitySlider() {
         capacitySlider.addOnChangeListener((slider, value, fromUser) -> {
             if (capacityValueText != null) {
-                capacityValueText.setText(String.format(Locale.getDefault(), 
+                capacityValueText.setText(String.format(Locale.getDefault(),
                     "Selected: %d people", (int) value));
             }
         });
@@ -176,13 +186,16 @@ public class SaveCourseActivity extends AppCompatActivity {
         int capacity = (int) capacitySlider.getValue();
         String priceStr = pricePerClassEdit.getText().toString().trim();
         String skillLevel = skillLevelSpinner.getSelectedItem().toString();
-        
+
         double price = Double.parseDouble(priceStr);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        priceStr = decimalFormat.format(price);
+        price = Double.parseDouble(priceStr);
 
         // Validate required fields
-        if (courseName.isEmpty() || typeOfClass.isEmpty() || dayOfWeek.isEmpty() || 
+        if (courseName.isEmpty() || typeOfClass.isEmpty() || dayOfWeek.isEmpty() ||
             timeOfCourse.isEmpty() || priceStr.isEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields", 
+            Toast.makeText(this, "Please fill in all required fields",
                 Toast.LENGTH_LONG).show();
             return;
         }

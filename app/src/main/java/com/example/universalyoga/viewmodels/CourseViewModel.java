@@ -75,4 +75,11 @@ public class CourseViewModel extends AndroidViewModel {
     public LiveData<List<Course>> getAllCourses() {
         return database.courseDAO().getAllCourses();
     }
+
+    public void deleteAllCourses() {
+        new Thread(() -> {
+            database.courseDAO().deleteAllCourses();
+            syncService.deleteAllCoursesFromFirebase();
+        }).start();
+    }
 }

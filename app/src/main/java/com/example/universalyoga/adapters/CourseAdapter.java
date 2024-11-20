@@ -35,14 +35,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         return new CourseViewHolder(itemView);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
-        Course currentCourse = courseList.get(position);
-        holder.courseNameTextView.setText(currentCourse.getCourseName());
-        holder.typeOfClassTextView.setText("Type of course: " + currentCourse.getTypeOfClass());
-        holder.dayOfWeekTextView.setText("Day of week: " + currentCourse.getDayOfWeek());
-    }
-
     public void setCourses(List<Course> courses) {
         this.courseList = courses;
         notifyDataSetChanged();
@@ -72,5 +64,13 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                 }
             });
         }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
+        Course currentCourse = courseList.get(position);
+        holder.courseNameTextView.setText(currentCourse.getCourseName());
+        holder.typeOfClassTextView.setText("Type of course: " + currentCourse.getTypeOfClass());
+        holder.dayOfWeekTextView.setText("Day of week: " + currentCourse.getDayOfWeek());
     }
 }

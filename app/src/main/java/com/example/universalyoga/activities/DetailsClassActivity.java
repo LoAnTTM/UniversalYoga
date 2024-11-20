@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.universalyoga.MainActivity;
 import com.example.universalyoga.R;
 import com.example.universalyoga.models.Class;
 import com.example.universalyoga.viewmodels.ClassViewModel;
@@ -24,8 +26,9 @@ public class DetailsClassActivity extends AppCompatActivity {
     private int classId;
     private Class currentClass;
 
-    private TextView classDateTextView, classTypeTextView, classTeacherTextView, classCommentsTextView;
+    private TextView courseNameTextView, classDateTextView, classTypeTextView, classTeacherTextView, classCommentsTextView;
     private Button editButton, deleteButton;
+    private ImageView homeIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +50,19 @@ public class DetailsClassActivity extends AppCompatActivity {
 
         editButton.setOnClickListener(v -> editClass(currentClass));
         deleteButton.setOnClickListener(v -> deleteClass(currentClass));
+
+        // Set up home icon click listener
+        homeIcon.setOnClickListener(v -> {
+            Intent homeIntent = new Intent(DetailsClassActivity.this, MainActivity.class);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeIntent);
+            finish();
+        });
     }
 
     private void initializeViews() {
+        homeIcon = findViewById(R.id.home_icon);
+        courseNameTextView = findViewById(R.id.course_name);
         classDateTextView = findViewById(R.id.class_date);
         classTypeTextView = findViewById(R.id.class_type);
         classTeacherTextView = findViewById(R.id.class_teacher);
@@ -68,8 +81,9 @@ public class DetailsClassActivity extends AppCompatActivity {
     }
 
     private void displayClassDetails(Class yogaClass) {
-        classDateTextView.setText(String.format("Date: %s", yogaClass.getDate()));
-        classTypeTextView.setText(String.format("Type: %s", yogaClass.getTypeOfClass()));
+        courseNameTextView.setText(String.format("Course name: " + yogaClass.getCourseName()));
+        classDateTextView.setText(String.format("Date: "+ yogaClass.getCourseDay()+ ", " + yogaClass.getDate()));
+        classTypeTextView.setText(String.format("Class type: %s", yogaClass.getTypeOfClass()));
         classTeacherTextView.setText(String.format("Teacher: %s", yogaClass.getTeacherName()));
         classCommentsTextView.setText(String.format("Comments: %s", 
             yogaClass.getComments().isEmpty() ? "No Comments" : yogaClass.getComments()));

@@ -1,10 +1,12 @@
 package com.example.universalyoga.fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +20,7 @@ import com.example.universalyoga.activities.DetailsCourseActivity;
 import com.example.universalyoga.activities.SaveCourseActivity;
 import com.example.universalyoga.adapters.CourseAdapter;
 import com.example.universalyoga.models.Course;
+import com.example.universalyoga.viewmodels.ClassViewModel;
 import com.example.universalyoga.viewmodels.CourseViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -26,9 +29,10 @@ import java.util.List;
 
 public class CoursesFragment extends Fragment {
     private CourseViewModel courseViewModel;
+    private ClassViewModel classViewModel;
     private RecyclerView recyclerView;
     private CourseAdapter courseAdapter;
-    private FloatingActionButton addButton;
+    private FloatingActionButton addButton, deleteAllButton;
     private List<Course> courses = new ArrayList<>();
 
     @Nullable
@@ -45,10 +49,22 @@ public class CoursesFragment extends Fragment {
             courseAdapter.setCourses(courses);
         });
 
+        classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
+
         addButton = view.findViewById(R.id.add_button);
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), SaveCourseActivity.class);
             startActivity(intent);
+        });
+
+        deleteAllButton = view.findViewById(R.id.delete_all_button);
+        deleteAllButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(getContext())
+                .setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to delete all courses and their related classes?")
+                .setPositiveButton("Yes", (dialog, which) -> deleteAllCoursesAndClasses())
+                .setNegativeButton("No", null)
+                .show();
         });
 
         return view;
@@ -56,10 +72,20 @@ public class CoursesFragment extends Fragment {
 
     public void onCourseClick(Course course) {
         if (course != null) {
-//            Log.d(TAG, "Opening course details for ID: " + course.getCourseId());
             Intent intent = new Intent(getActivity(), DetailsCourseActivity.class);
             intent.putExtra("course_id", course.getCourseId());
             startActivity(intent);
         }
+    }
+
+    private void deleteAllCoursesAndClasses() {
+        new Thread(() -> {
+            classViewModel.deleteAllClasses();
+            courseViewModel.deleteAllCourses();
+    
+            getActivity().runOnUiThread(() -> {
+                Toast.makeText(getContext(), "All courses and related classes deleted successfully", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
     }
 }

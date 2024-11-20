@@ -49,4 +49,11 @@ public class ClassViewModel extends AndroidViewModel {
             syncService.deleteClassFromFirebase(yogaClass.getClassId());
         }).start();
     }
+
+    public void deleteAllClasses() {
+        new Thread(() -> {
+            database.classDAO().deleteAllClasses();
+            syncService.deleteAllClassesFromFirebase();
+        }).start();
+    }
 }

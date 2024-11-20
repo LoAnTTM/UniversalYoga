@@ -1,12 +1,11 @@
 package com.example.universalyoga.activities;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.universalyoga.MainActivity;
 import com.example.universalyoga.R;
 import com.example.universalyoga.adapters.ClassAdapter;
 import com.example.universalyoga.database.YogaDatabase;
@@ -39,6 +39,7 @@ public class DetailsCourseActivity extends AppCompatActivity {
     private RecyclerView classesRecyclerView;
     private ClassAdapter classAdapter;
     private FloatingActionButton addClassButton;
+    private ImageView homeIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,35 @@ public class DetailsCourseActivity extends AppCompatActivity {
         // Initialize ViewModel
         courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
         classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
+
+        // Set up RecyclerView for classes
+        classesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        classAdapter = new ClassAdapter(new ClassAdapter.OnClassClickListener() {
+            @Override
+            public void onClassClick(Class yogaClass) {
+                Intent intent = new Intent(DetailsCourseActivity.this, SaveClassActivity.class);
+                intent.putExtra("class_id", yogaClass.getClassId());
+                intent.putExtra("course_name", currentCourse.getCourseName());
+                intent.putExtra("course_day", currentCourse.getDayOfWeek());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onDeleteClick(Class yogaClass) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(DetailsCourseActivity.this);
+                builder.setTitle("Confirm Delete");
+                builder.setMessage("Are you sure you want to delete this class?");
+                builder.setPositiveButton("Yes", (dialog, which) -> {
+                    classViewModel.deleteClass(yogaClass);
+                    Toast.makeText(DetailsCourseActivity.this, "Class deleted successfully", Toast.LENGTH_SHORT).show();
+                    loadClassesForCourse(currentCourse.getCourseId());
+                });
+                builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+                builder.show();
+            }
+        }, true);
+        classesRecyclerView.setAdapter(classAdapter);
+        
 
          // Get course ID from intent
          Intent intent = getIntent();
@@ -68,9 +98,18 @@ public class DetailsCourseActivity extends AppCompatActivity {
 
         editButton.setOnClickListener(v -> editCourse(currentCourse));
         deleteButton.setOnClickListener(v -> deleteCourse(currentCourse));
+
+        // Set up home icon click listener
+        homeIcon.setOnClickListener(v -> {
+            Intent homeIntent = new Intent(DetailsCourseActivity.this, MainActivity.class);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeIntent);
+            finish();
+        });
     }
 
     private void initializeViews() {
+        homeIcon = findViewById(R.id.home_icon);
         courseNameText = findViewById(R.id.course_name_text);
         typeOfClassText = findViewById(R.id.type_of_class_text);
         descriptionText = findViewById(R.id.description_text);
@@ -82,9 +121,6 @@ public class DetailsCourseActivity extends AppCompatActivity {
         skillLevelText = findViewById(R.id.skill_level_text);
 
         classesRecyclerView = findViewById(R.id.classes_recycler_view);
-        classesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        classAdapter = new ClassAdapter(this::onClassClick);
-        classesRecyclerView.setAdapter(classAdapter);
 
         editButton = findViewById(R.id.edit_course_button);
         deleteButton = findViewById(R.id.delete_course_button);
@@ -104,7 +140,7 @@ public class DetailsCourseActivity extends AppCompatActivity {
 
     private void displayCourseDetails(Course course) {
         courseNameText.setText(String.format("Course Name: " + course.getCourseName()));
-        typeOfClassText.setText(String.format("Type of Class: " + course.getTypeOfClass()));
+        typeOfClassText.setText(String.format("Type of Course: " + course.getTypeOfClass()));
         descriptionText.setText(String.format("Description: " + (course.getDescription().isEmpty() ? "No Description" : course.getDescription())));
         dayOfWeekText.setText(String.format("Day of Week: " + course.getDayOfWeek()));
         timeOfCourseText.setText(String.format("Time of Course: " + course.getTimeOfCourse()));
@@ -146,13 +182,8 @@ public class DetailsCourseActivity extends AppCompatActivity {
     private void startAddClassActivity(Course course) {
         Intent intent = new Intent(this, SaveClassActivity.class);
         intent.putExtra("course_id", course.getCourseId());
-        // intent.putExtra("date_of_week", currentCourse.getDayOfWeek());
-        startActivity(intent);
-    }
-
-    private void onClassClick(Class yogaClass) {
-        Intent intent = new Intent(this, DetailsClassActivity.class);
-        intent.putExtra("class_id", yogaClass.getClassId());
+        intent.putExtra("course_name", course.getCourseName());
+        intent.putExtra("course_day", course.getDayOfWeek());
         startActivity(intent);
     }
 

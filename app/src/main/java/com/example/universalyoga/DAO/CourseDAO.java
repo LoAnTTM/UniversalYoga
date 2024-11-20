@@ -22,6 +22,9 @@ public interface CourseDAO {
     @Delete
     void deleteCourse(Course course);
 
+    @Query("DELETE FROM courses")
+    void deleteAllCourses();
+
     @Query("SELECT * FROM Courses")
     LiveData<List<Course>> getAllCourses();
 

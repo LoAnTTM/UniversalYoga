@@ -1,10 +1,12 @@
 package com.example.universalyoga.fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +32,19 @@ public class ClassesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_classes, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        classAdapter = new ClassAdapter(this::onClassClick);
+
+        classAdapter = new ClassAdapter(new ClassAdapter.OnClassClickListener() {
+            @Override
+            public void onClassClick(Class yogaClass) {
+                navigateToDetails(yogaClass);
+            }
+
+            @Override
+            public void onDeleteClick(Class yogaClass) {
+                // No action needed as delete button is hidden
+            }
+        }, false);
+
         recyclerView.setAdapter(classAdapter);
 
         classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
@@ -41,9 +55,21 @@ public class ClassesFragment extends Fragment {
         return view;
     }
 
-    private void onClassClick(Class yogaClass) {
+    private void navigateToDetails(Class yogaClass) {
         Intent intent = new Intent(getActivity(), DetailsClassActivity.class);
         intent.putExtra("class_id", yogaClass.getClassId());
         startActivity(intent);
+    }
+    private void confirmAndDeleteClass(Class yogaClass) {
+        // Show confirmation dialog before deleting a class
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to delete this class?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    classViewModel.deleteClass(yogaClass);
+                    Toast.makeText(getContext(), "Class deleted successfully", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

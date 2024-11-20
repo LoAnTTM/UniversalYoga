@@ -14,6 +14,12 @@ public class Class {
     @NonNull
     private int courseId;
 
+    @ColumnInfo(name = "course_name")
+    private String courseName;
+
+    @ColumnInfo(name = "course_day")
+    private String courseDay;
+
     @ColumnInfo(name = "date")
     @NonNull
     private String date;
@@ -30,8 +36,10 @@ public class Class {
     private String comments;
 
     // Constructor
-    public Class(int courseId, String date, String typeOfClass, String teacherName, String comments) {
+    public Class(int courseId, String courseName, String courseDay, String date, String typeOfClass, String teacherName, String comments) {
         this.courseId = courseId;
+        this.courseName = courseName;
+        this.courseDay = courseDay;
         this.date = date;
         this.typeOfClass = typeOfClass;
         this.teacherName = teacherName;
@@ -49,7 +57,7 @@ public class Class {
 
     public String getDate() {
         return date;
-    } 
+    }
 
     public String getTypeOfClass() {
         return typeOfClass;
@@ -61,6 +69,14 @@ public class Class {
 
     public String getComments() {
         return comments;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public String getCourseDay() {
+        return courseDay;
     }
 
     // Setters
@@ -86,5 +102,13 @@ public class Class {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public void setCourseDay(String courseDay) {
+        this.courseDay = courseDay;
     }
 }

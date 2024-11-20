@@ -37,9 +37,9 @@ public class SyncService {
 //     }
 
     public void clearAndSyncFirebaseData() {
-            firebaseDatabase.child("courses").removeValue()
+        firebaseDatabase.child("courses").removeValue()
                 .addOnSuccessListener(aVoid -> syncCoursesToFirebase());
-            firebaseDatabase.child("classes").removeValue()
+        firebaseDatabase.child("classes").removeValue()
                 .addOnSuccessListener(aVoid -> syncClassesToFirebase());
 
     }
@@ -65,14 +65,18 @@ public class SyncService {
     }
 
     public void deleteCourseFromFirebase(int courseId) {
-        // if (NetworkUtils.isNetworkAvailable(context)) {
-            firebaseDatabase.child("courses").child(String.valueOf(courseId)).removeValue();
-        // }
+        firebaseDatabase.child("courses").child(String.valueOf(courseId)).removeValue();
     }
 
     public void deleteClassFromFirebase(int classId) {
-        // if (NetworkUtils.isNetworkAvailable(context)) {
-            firebaseDatabase.child("classes").child(String.valueOf(classId)).removeValue();
-        // }
+        firebaseDatabase.child("classes").child(String.valueOf(classId)).removeValue();
+    }
+
+    public void deleteAllCoursesFromFirebase(){
+        firebaseDatabase.child("courses").removeValue();
+    }
+
+    public void deleteAllClassesFromFirebase(){
+        firebaseDatabase.child("classes").removeValue();
     }
 }

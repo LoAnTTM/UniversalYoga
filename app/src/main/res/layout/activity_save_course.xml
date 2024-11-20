@@ -10,6 +10,14 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add/Edit Course"
+            android:textSize="27sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp"/>
+
         <EditText
             android:id="@+id/course_name"
             android:layout_width="match_parent"
@@ -20,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="1dp"
-            android:hint="Type of class" />
+            android:hint="Type of course" />
 
         <RadioGroup
             android:id="@+id/type_of_class_group"
@@ -60,7 +68,6 @@
             android:hint="Day of Week"
             android:layout_marginTop="8dp"/>
 
-            <!-- Replace the Spinner with this ChipGroup -->
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/day_of_week_chip_group"
             android:layout_width="match_parent"
@@ -128,29 +135,27 @@
         <TimePicker
             android:id="@+id/time_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:timePickerMode="spinner"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_height="154dp"
+            android:layout_gravity="center_horizontal"
+            android:timePickerMode="spinner" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="1dp"
-            android:text="Duration (minutes)"
-            android:layout_marginTop="8dp"/>
+            android:text="Duration (minutes)"/>
 
         <NumberPicker
             android:id="@+id/duration_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_height="110dp"
+            android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="1dp"
-            android:text="Capacity"
-            android:layout_marginTop="8dp"/>
+            android:text="Capacity"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -179,7 +184,9 @@
             android:id="@+id/price_per_class"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Price per Class" />
+            android:hint="Price per Class"
+            android:inputType="numberDecimal"
+            android:maxLength="9" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -193,12 +200,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/skill_levels"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
 
-        <Button
-            android:id="@+id/save_button"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Course" />
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancel"
+                android:backgroundTint="?attr/colorError" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Save Course" />
+        </LinearLayout>
+
     </LinearLayout>
+
 </ScrollView>
