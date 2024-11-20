@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +27,7 @@ public class ClassesFragment extends Fragment {
     private ClassViewModel classViewModel;
     private RecyclerView recyclerView;
     private ClassAdapter classAdapter;
+    private SearchView classSearchView;
 
     @Nullable
     @Override
@@ -51,25 +54,34 @@ public class ClassesFragment extends Fragment {
         classViewModel.getAllClasses().observe(getViewLifecycleOwner(), classes -> {
             classAdapter.setClasses(classes);
         });
+        
+        classSearchView = view.findViewById(R.id.class_search_view);
+        classSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchClasses(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchClasses(newText);
+                return false;
+            }
+        });
 
         return view;
+    }
+
+    private void searchClasses(String query) {
+        classViewModel.searchClasses(query).observe(getViewLifecycleOwner(), classes -> {
+            classAdapter.setClasses(classes);
+        });
     }
 
     private void navigateToDetails(Class yogaClass) {
         Intent intent = new Intent(getActivity(), DetailsClassActivity.class);
         intent.putExtra("class_id", yogaClass.getClassId());
         startActivity(intent);
-    }
-    private void confirmAndDeleteClass(Class yogaClass) {
-        // Show confirmation dialog before deleting a class
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Confirm Delete")
-                .setMessage("Are you sure you want to delete this class?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    classViewModel.deleteClass(yogaClass);
-                    Toast.makeText(getContext(), "Class deleted successfully", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-                .show();
     }
 }

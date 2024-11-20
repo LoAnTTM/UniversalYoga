@@ -56,4 +56,8 @@ public class ClassViewModel extends AndroidViewModel {
             syncService.deleteAllClassesFromFirebase();
         }).start();
     }
+
+    public LiveData<List<Class>> searchClasses(String query) {
+        return database.classDAO().searchClasses("%" + query + "%");
+    }
 }

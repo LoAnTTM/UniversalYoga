@@ -47,4 +47,8 @@ public interface ClassDAO {
 
     @Query("SELECT * FROM classes WHERE course_id = :courseId")
     List<Class> getAllClassesByCourseIdSync(int courseId);
+
+
+    @Query("SELECT * FROM classes WHERE teacher_name LIKE :query OR type_of_class LIKE :query OR comments LIKE :query OR course_name LIKE :query OR course_day LIKE :query")
+    LiveData<List<Class>> searchClasses(String query);
 }
