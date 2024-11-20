@@ -18,21 +18,13 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     private List<Course> courseList;
     private OnCourseClickListener listener;
 
-    // Định nghĩa interface OnCourseClickListener để xử lý các hành động khác nhau trên mỗi item
     public interface OnCourseClickListener {
         void onCourseClick(Course course);
     }
 
-    // Constructor
     public CourseAdapter(List<Course> courses, OnCourseClickListener listener) {
         this.courseList = courses;
         this.listener = listener;
-    }
-
-    // Để cập nhật danh sách các khóa học
-    public void setCourses(List<Course> courses) {
-        this.courseList = courses;
-        notifyDataSetChanged();
     }
 
     @NonNull
@@ -46,35 +38,39 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     @Override
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
         Course currentCourse = courseList.get(position);
-        holder.bind(currentCourse);
+        holder.courseNameTextView.setText(currentCourse.getCourseName());
+        holder.typeOfClassTextView.setText("Type of course: " + currentCourse.getTypeOfClass());
+        holder.dayOfWeekTextView.setText("Day of week: " + currentCourse.getDayOfWeek());
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courseList = courses;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return courseList != null ? courseList.size() : 0;
+        return courseList.size();
     }
 
     class CourseViewHolder extends RecyclerView.ViewHolder {
 
         private TextView courseNameTextView;
         private TextView typeOfClassTextView;
+        private TextView dayOfWeekTextView;
 
         public CourseViewHolder(@NonNull View itemView) {
             super(itemView);
             courseNameTextView = itemView.findViewById(R.id.course_name);
             typeOfClassTextView = itemView.findViewById(R.id.type_of_class);
+            dayOfWeekTextView = itemView.findViewById(R.id.day_of_week);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if (position != RecyclerView.NO_POSITION && listener != null) {
                     listener.onCourseClick(courseList.get(position));
                 }
             });
-        }
-
-        public void bind(Course course) {
-            courseNameTextView.setText(course.getCourseName());
-            typeOfClassTextView.setText(course.getTypeOfClass());
         }
     }
 }

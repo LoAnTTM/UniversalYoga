@@ -21,8 +21,16 @@ public class ClassViewModel extends AndroidViewModel {
         syncService = SyncService.getInstance(application);
     }
 
+    public LiveData<List<Class>> getAllClasses() {
+        return database.classDAO().getAllClasses();
+    }
+
     public LiveData<Class> getClass(int classId) {
         return database.classDAO().getClassById(classId);
+    }
+
+    public LiveData<List<Class>> getClassesByCourseId(int courseId) {
+        return database.classDAO().getAllClassesByCourseId(courseId);
     }
 
     public void saveClass(Class yogaClass) {
@@ -40,9 +48,5 @@ public class ClassViewModel extends AndroidViewModel {
             database.classDAO().deleteClass(yogaClass);
             syncService.deleteClassFromFirebase(yogaClass.getClassId());
         }).start();
-    }
-
-    public LiveData<List<Class>> getClassesByCourseId(int courseId) {
-        return database.classDAO().getAllClassesByCourseId(courseId);
     }
 }

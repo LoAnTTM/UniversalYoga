@@ -41,4 +41,7 @@ public interface ClassDAO {
     //Get all classes for a specific date
     @Query("SELECT * FROM classes WHERE date = :date")
     LiveData<List<Class>> getAllClassesByDate(String date);
+
+    @Query("SELECT * FROM classes WHERE course_id = :courseId")
+    List<Class> getAllClassesByCourseIdSync(int courseId);
 }

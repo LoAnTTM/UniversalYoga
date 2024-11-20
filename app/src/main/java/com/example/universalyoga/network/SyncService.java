@@ -29,11 +29,19 @@ public class SyncService {
         return instance;
     }
 
-    public void syncData() {
-        if (NetworkUtils.isNetworkAvailable(context)) {
-            syncCoursesToFirebase();
-            syncClassesToFirebase();
-        }
+//     public void syncData() {
+//         if (NetworkUtils.isNetworkAvailable(context)) {
+//             syncCoursesToFirebase();
+//             syncClassesToFirebase();
+//         }
+//     }
+
+    public void clearAndSyncFirebaseData() {
+            firebaseDatabase.child("courses").removeValue()
+                .addOnSuccessListener(aVoid -> syncCoursesToFirebase());
+            firebaseDatabase.child("classes").removeValue()
+                .addOnSuccessListener(aVoid -> syncClassesToFirebase());
+
     }
 
     private void syncCoursesToFirebase() {
@@ -57,14 +65,14 @@ public class SyncService {
     }
 
     public void deleteCourseFromFirebase(int courseId) {
-        if (NetworkUtils.isNetworkAvailable(context)) {
+        // if (NetworkUtils.isNetworkAvailable(context)) {
             firebaseDatabase.child("courses").child(String.valueOf(courseId)).removeValue();
-        }
+        // }
     }
 
     public void deleteClassFromFirebase(int classId) {
-        if (NetworkUtils.isNetworkAvailable(context)) {
+        // if (NetworkUtils.isNetworkAvailable(context)) {
             firebaseDatabase.child("classes").child(String.valueOf(classId)).removeValue();
-        }
+        // }
     }
 }

@@ -8,7 +8,7 @@ public class NetworkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (NetworkUtils.isNetworkAvailable(context)) {
-            SyncService.getInstance(context).syncData();
+            SyncService.getInstance(context).clearAndSyncFirebaseData();
         }
     }
 }

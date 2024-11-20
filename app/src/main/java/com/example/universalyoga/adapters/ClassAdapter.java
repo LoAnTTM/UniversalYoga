@@ -39,6 +39,8 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         Class currentClass = classes.get(position);
         holder.dateText.setText("Date: " + currentClass.getDate());
         holder.classTypeText.setText("Class type: " + currentClass.getTypeOfClass());
+        holder.teacherText.setText("Teacher name: " + currentClass.getTeacherName());
+        holder.commentText.setText("Comment: " + (currentClass.getComments().isEmpty() ? "No Comments" : currentClass.getComments()));
     }
 
     @Override
@@ -54,15 +56,18 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
     class ClassViewHolder extends RecyclerView.ViewHolder {
         private TextView dateText;
         private TextView classTypeText;
+        private TextView teacherText;
+        private TextView commentText;
 
         public ClassViewHolder(View itemView) {
             super(itemView);
             dateText = itemView.findViewById(R.id.class_date);
             classTypeText = itemView.findViewById(R.id.type_of_class);
-
+            teacherText = itemView.findViewById(R.id.teacher_name);
+            commentText = itemView.findViewById(R.id.comment);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
                     listener.onClassClick(classes.get(position));
                 }
