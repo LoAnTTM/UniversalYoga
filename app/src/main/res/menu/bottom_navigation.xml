@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_courses"
+        android:icon="@drawable/baseline_sports_gymnastics_24"
+        android:title="Courses" />
+    <item
+        android:id="@+id/nav_classes"
+        android:icon="@drawable/baseline_class_24"
+        android:title="Classes" />
+</menu>
