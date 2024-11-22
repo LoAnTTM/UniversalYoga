@@ -27,6 +27,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment to display a list of courses.
+ * It allows users to add new courses, view details of existing courses,
+ * and delete all courses along with their related classes.
+ */
 public class CoursesFragment extends Fragment {
     private CourseViewModel courseViewModel;
     private ClassViewModel classViewModel;
@@ -35,6 +40,14 @@ public class CoursesFragment extends Fragment {
     private FloatingActionButton addButton, deleteAllButton;
     private List<Course> courses = new ArrayList<>();
 
+     /**
+     * Called to have the fragment instantiate its user interface view.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to. The fragment should not add the view itself,
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,6 +83,11 @@ public class CoursesFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Handles the click event on a course item.
+     *
+     * @param course The course that was clicked.
+     */
     public void onCourseClick(Course course) {
         if (course != null) {
             Intent intent = new Intent(getActivity(), DetailsCourseActivity.class);
@@ -78,6 +96,9 @@ public class CoursesFragment extends Fragment {
         }
     }
 
+    /**
+     * Deletes all courses and their related classes from the database.
+     */
     private void deleteAllCoursesAndClasses() {
         new Thread(() -> {
             classViewModel.deleteAllClasses();

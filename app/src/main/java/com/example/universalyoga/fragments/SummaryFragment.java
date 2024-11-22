@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+/**
+ * Fragment to display summary information about courses and classes.
+ * It calculates and shows the total number of courses, classes, revenue, and unique teachers.
+ */
 public class SummaryFragment extends Fragment {
 
     private CourseViewModel courseViewModel;
@@ -49,6 +53,10 @@ public class SummaryFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads the summary data for courses and classes.
+     * Observes the LiveData from ViewModels to update the UI.
+     */
     private void loadSummary() {
         courseViewModel.getAllCourses().observe(getViewLifecycleOwner(), courses -> {
             int courseCount = courses != null ? courses.size() : 0;
@@ -65,12 +73,20 @@ public class SummaryFragment extends Fragment {
         });
     }
 
+    /**
+     * Inner class to hold summary data.
+     */
     private static class SummaryData {
         int totalClasses = 0;
         double totalRevenue = 0;
         Set<String> uniqueTeachers = new HashSet<>();
     }
 
+    /**
+     * Calculates additional summary data such as total classes, revenue, and unique teachers.
+     *
+     * @param courses The list of courses to analyze.
+     */
     private void calculateAdditionalSummary(List<Course> courses) {
         SummaryData summaryData = new SummaryData();
 
@@ -90,6 +106,11 @@ public class SummaryFragment extends Fragment {
         }
     }
 
+    /**
+     * Updates the summary views with the calculated data.
+     *
+     * @param summaryData The summary data to display.
+     */
     private void updateSummaryViews(SummaryData summaryData) {
         revenueSummaryText.setText(String.format(Locale.getDefault(), "Total Revenue: $%.2f", summaryData.totalRevenue));
         teacherSummaryText.setText(String.format(Locale.getDefault(), "Total Teachers: %d", summaryData.uniqueTeachers.size()));

@@ -15,22 +15,42 @@ import com.example.universalyoga.models.Class;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter for displaying a list of yoga classes in a RecyclerView.
+ * This adapter handles the binding of class data to the UI components.
+ */
 public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHolder> {
     private List<Class> classes = new ArrayList<>();
     private OnClassClickListener listener;
     private boolean showDeleteButton;
 
+    /**
+     * Interface for handling class click events.
+     */
     public interface OnClassClickListener {
         void onClassClick(Class yogaClass);
 
         void onDeleteClick(Class yogaClass);
     }
 
+    /**
+     * Constructor for the ClassAdapter.
+     *
+     * @param listener The listener for class click events.
+     * @param showDeleteButton Flag to indicate if the delete button should be shown.
+     */
     public ClassAdapter(OnClassClickListener listener, boolean showDeleteButton) {
         this.listener = listener;
         this.showDeleteButton = showDeleteButton;
     }
 
+    /**
+     * Called when RecyclerView needs a new {@link ClassViewHolder} of the given type to represent an item.
+     *
+     * @param parent The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new ClassViewHolder that holds a View of the given view type.
+     */
     @NonNull
     @Override
     public ClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,16 +59,29 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         return new ClassViewHolder(itemView);
     }
 
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return The total number of items in this adapter.
+     */
     @Override
     public int getItemCount() {
         return classes.size();
     }
 
+    /**
+     * Sets the list of classes and notifies the adapter to refresh the UI.
+     *
+     * @param classes The list of classes to display.
+     */
     public void setClasses(List<Class> classes) {
         this.classes = classes;
         notifyDataSetChanged();
     }
 
+    /**
+     * ViewHolder class for holding the views for each class item.
+     */
     class ClassViewHolder extends RecyclerView.ViewHolder {
         private TextView dateText;
         private TextView classTypeText;
@@ -68,6 +101,13 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         }
     }
 
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     * This method should update the contents of the {@link ClassViewHolder#itemView} to reflect the item at the given position.
+     *
+     * @param holder The ViewHolder which should be updated to represent the contents of the item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ClassViewHolder holder, int position) {
         Class currentClass = classes.get(position);

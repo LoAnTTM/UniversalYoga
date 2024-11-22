@@ -22,6 +22,11 @@ import com.example.universalyoga.viewmodels.ClassViewModel;
 import com.example.universalyoga.viewmodels.CourseViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+/**
+ * Activity to display the details of a specific course.
+ * It allows users to view course information, edit or delete the course,
+ * and manage associated classes.
+ */
 public class DetailsCourseActivity extends AppCompatActivity {
     private TextView courseNameText, typeOfClassText, descriptionText, dayOfWeekText,
             timeOfCourseText, durationText, capacityText, priceText, skillLevelText;
@@ -95,6 +100,9 @@ public class DetailsCourseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the UI components.
+     */
     private void initializeViews() {
         homeIcon = findViewById(R.id.home_icon);
         courseNameText = findViewById(R.id.course_name_text);
@@ -114,6 +122,11 @@ public class DetailsCourseActivity extends AppCompatActivity {
         addClassButton = findViewById(R.id.add_class_button);
     }
 
+    /**
+     * Loads the details of the course with the specified ID.
+     *
+     * @param courseId The ID of the course to load.
+     */
     private void loadCourseDetails(int courseId) {
         courseViewModel.getCourse(courseId).observe(this, course -> {
             if (course != null) {
@@ -124,6 +137,11 @@ public class DetailsCourseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays the details of the specified course in the UI.
+     *
+     * @param course The course to display.
+     */
     private void displayCourseDetails(Course course) {
         courseNameText.setText(String.format("Course Name: " + course.getCourseName()));
         typeOfClassText.setText(String.format("Type of Course: " + course.getTypeOfClass()));
@@ -136,12 +154,22 @@ public class DetailsCourseActivity extends AppCompatActivity {
         skillLevelText.setText(String.format("Skill Level: " + course.getSkillLevel()));
     }
 
+    /**
+     * Starts the activity to edit the specified course.
+     *
+     * @param course The course to edit.
+     */
     private void editCourse(Course course) {
         Intent intent = new Intent(this, SaveCourseActivity.class);
         intent.putExtra("course_id", course.getCourseId());
         startActivity(intent);
     }
 
+    /**
+     * Deletes the specified course after user confirmation.
+     *
+     * @param course The course to delete.
+     */
     private void deleteCourse(Course course) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm Delete");
@@ -156,6 +184,11 @@ public class DetailsCourseActivity extends AppCompatActivity {
     }
 
     // Class --------------------------------------------------------------------------
+    /**
+     * Loads the classes associated with the specified course ID.
+     *
+     * @param courseId The ID of the course.
+     */
     private void loadClassesForCourse(int courseId) {
         classViewModel.getClassesByCourseId(courseId).observe(this, classes -> {
             if (classes != null) {
@@ -164,6 +197,11 @@ public class DetailsCourseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts the activity to add a new class for the specified course.
+     *
+     * @param course The course for which to add a class.
+     */
     private void startAddClassActivity(Course course) {
         Intent intent = new Intent(this, SaveClassActivity.class);
         intent.putExtra("course_id", course.getCourseId());

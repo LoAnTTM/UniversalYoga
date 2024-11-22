@@ -30,6 +30,10 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.slider.Slider;
 
+/**
+ * Activity for saving or updating a course.
+ * This activity allows users to input course details and save them to the database.
+ */
 public class SaveCourseActivity extends AppCompatActivity {
     private EditText courseNameEdit, descriptionEdit, pricePerClassEdit;
     private RadioGroup typeOfClassGroup;
@@ -44,7 +48,11 @@ public class SaveCourseActivity extends AppCompatActivity {
     private CourseViewModel courseViewModel;
     private Course currentCourse;
 
-
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +109,9 @@ public class SaveCourseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the views in the activity.
+     */
     private void initializeViews() {
         courseNameEdit = findViewById(R.id.course_name);
         typeOfClassGroup = findViewById(R.id.type_of_class_group);
@@ -116,6 +127,11 @@ public class SaveCourseActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancel_button);
     }
 
+    /**
+     * Gets the selected type of class from the RadioGroup.
+     *
+     * @return The selected type of class.
+     */
     private String getSelectedTypeOfClass() {
         int selectedId = typeOfClassGroup.getCheckedRadioButtonId();
         if (selectedId == R.id.flow_yoga) {
@@ -128,10 +144,18 @@ public class SaveCourseActivity extends AppCompatActivity {
         return "";
     }
 
+    /**
+     * Sets up the ChipGroup for selecting the day of the week.
+     */
     private void setupChipGroup() {
         dayOfWeekChipGroup.setSingleSelection(true);
     }
 
+    /**
+     * Gets the selected day of the week from the ChipGroup.
+     *
+     * @return The selected day of the week.
+     */
     private String getSelectedDayOfWeek() {
         int selectedChipId = dayOfWeekChipGroup.getCheckedChipId();
         if (selectedChipId != View.NO_ID) {
@@ -141,6 +165,11 @@ public class SaveCourseActivity extends AppCompatActivity {
         return "";
     }
 
+    /**
+     * Gets the time from the TimePicker.
+     *
+     * @return The selected time as a string.
+     */
     private String getTimeFromPicker() {
         int hour = timePicker.getHour();
         int minute = timePicker.getMinute();
@@ -149,6 +178,9 @@ public class SaveCourseActivity extends AppCompatActivity {
         return String.format(Locale.getDefault(), "%02d:%02d %s", hour12, minute, amPm);
     }
 
+    /**
+     * Sets up the NumberPicker for selecting the duration of the course.
+     */
     private void setupDurationPicker() {
         durationPicker.setMinValue(30);
         durationPicker.setMaxValue(180);
@@ -156,6 +188,9 @@ public class SaveCourseActivity extends AppCompatActivity {
         durationPicker.setFormatter(value -> String.format("%d min", value));
     }
 
+    /**
+     * Sets up the Slider for selecting the capacity of the course.
+     */
     private void setupCapacitySlider() {
         capacitySlider.addOnChangeListener((slider, value, fromUser) -> {
             if (capacityValueText != null) {
@@ -165,6 +200,9 @@ public class SaveCourseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validates the input fields and saves the course to the database.
+     */
     private void validateAndSaveCourse() {
         String courseName = courseNameEdit.getText().toString().trim();
         String typeOfClass = getSelectedTypeOfClass();
@@ -235,6 +273,12 @@ public class SaveCourseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the RadioButton ID based on the type of class.
+     *
+     * @param typeOfClass The type of class.
+     * @return The RadioButton ID.
+     */
     private int setRadioButtonId(String typeOfClass) {
         switch (typeOfClass) {
             case "Flow Yoga":
@@ -248,6 +292,12 @@ public class SaveCourseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the Chip ID based on the day of the week.
+     *
+     * @param dayOfWeek The day of the week.
+     * @return The Chip ID.
+     */
     private int setDayOfWeek(String dayOfWeek) {
         switch (dayOfWeek) {
             case "Monday":
@@ -269,6 +319,12 @@ public class SaveCourseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the Spinner selection based on the skill level.
+     *
+     * @param skillLevel The skill level.
+     * @return The Spinner selection index.
+     */
     private int setSkillLevel(String skillLevel) {
         String[] skillLevels = getResources().getStringArray(R.array.skill_levels);
         for (int i = 0; i < skillLevels.length; i++) {

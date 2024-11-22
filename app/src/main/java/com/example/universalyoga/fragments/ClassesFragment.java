@@ -23,12 +23,24 @@ import com.example.universalyoga.adapters.ClassAdapter;
 import com.example.universalyoga.models.Class;
 import com.example.universalyoga.viewmodels.ClassViewModel;
 
+/**
+ * Fragment to display a list of yoga classes.
+ * It allows users to search for classes and view details of selected classes.
+ */
 public class ClassesFragment extends Fragment {
     private ClassViewModel classViewModel;
     private RecyclerView recyclerView;
     private ClassAdapter classAdapter;
     private SearchView classSearchView;
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to. The fragment should not add the view itself,
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,12 +85,22 @@ public class ClassesFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Searches for classes based on the query.
+     *
+     * @param query The search query.
+     */
     private void searchClasses(String query) {
         classViewModel.searchClasses(query).observe(getViewLifecycleOwner(), classes -> {
             classAdapter.setClasses(classes);
         });
     }
 
+    /**
+     * Navigates to the details of the selected class.
+     *
+     * @param yogaClass The selected class.
+     */
     private void navigateToDetails(Class yogaClass) {
         Intent intent = new Intent(getActivity(), DetailsClassActivity.class);
         intent.putExtra("class_id", yogaClass.getClassId());

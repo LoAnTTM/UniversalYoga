@@ -6,6 +6,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * Represents a course in the application.
+ * This class is used to define the structure of the course data stored in the local database.
+ */
 @Entity(tableName = "Courses")
 public class Course {
     @PrimaryKey(autoGenerate = true)
@@ -47,7 +51,19 @@ public class Course {
     private String skillLevel;
 
 
-    // Constructor
+    /**
+     * Constructor for the Course class.
+     *
+     * @param courseName     The name of the course.
+     * @param typeOfClass    The type of class.
+     * @param description     The description of the course.
+     * @param dayOfWeek      The day of the week the course is held.
+     * @param timeOfCourse   The time when the course starts.
+     * @param duration       The duration of the course in minutes.
+     * @param capacity       The maximum number of participants.
+     * @param pricePerClass  The price per class.
+     * @param skillLevel     The skill level required for the course.
+     */
     public Course(@NonNull String courseName, @NonNull String typeOfClass, String description,
                   @NonNull String dayOfWeek, @NonNull String timeOfCourse, @NonNull int duration,
                   @NonNull int capacity, @NonNull double pricePerClass, @NonNull String skillLevel) {
@@ -62,7 +78,7 @@ public class Course {
         this.skillLevel = skillLevel;
     }
 
-    // Getters
+    // Getters-------------------------------------------------
     public int getCourseId() {
         return courseId;
     }
@@ -103,7 +119,7 @@ public class Course {
         return skillLevel;
     }
 
-    // Setters
+    // Setters-------------------------------------------------
     public void setCourseId(int courseId) {
         this.courseId = courseId;
     }

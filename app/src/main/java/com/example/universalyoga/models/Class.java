@@ -5,6 +5,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * Represents a class in the application.
+ * This class is used to define the structure of the class data stored in the local database.
+ */
 @Entity(tableName = "Classes")
 public class Class {
     @PrimaryKey(autoGenerate = true)
@@ -35,7 +39,17 @@ public class Class {
     @ColumnInfo(name = "comments")
     private String comments;
 
-    // Constructor
+    /**
+     * Constructor for the Class class.
+     *
+     * @param courseId     The ID of the associated course.
+     * @param courseName   The name of the associated course.
+     * @param courseDay    The day of the week the class is held.
+     * @param date         The date of the class.
+     * @param typeOfClass  The type of class.
+     * @param teacherName  The name of the teacher.
+     * @param comments     Comments or notes about the class.
+     */
     public Class(int courseId, String courseName, String courseDay, String date, String typeOfClass, String teacherName, String comments) {
         this.courseId = courseId;
         this.courseName = courseName;
@@ -46,7 +60,7 @@ public class Class {
         this.comments = comments;
     }
 
-    // Getters
+    // Getters-------------------------------------------------
     public int getClassId() {
         return classId;
     }
@@ -79,7 +93,7 @@ public class Class {
         return courseDay;
     }
 
-    // Setters
+    // Setters-------------------------------------------------
     public void setClassId(int classId) {
         this.classId = classId;
     }

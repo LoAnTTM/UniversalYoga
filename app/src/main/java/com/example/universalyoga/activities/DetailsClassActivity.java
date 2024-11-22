@@ -14,6 +14,9 @@ import com.example.universalyoga.R;
 import com.example.universalyoga.models.Class;
 import com.example.universalyoga.viewmodels.ClassViewModel;
 
+/**
+ * Activity to display details of a specific class.
+ */
 public class DetailsClassActivity extends AppCompatActivity {
     private ClassViewModel classViewModel;
     private int classId;
@@ -30,6 +33,7 @@ public class DetailsClassActivity extends AppCompatActivity {
 
         classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
 
+        // Load class details based on classId passed through Intent
         classId = getIntent().getIntExtra("class_id", -1);
         if (classId == -1) {
             Toast.makeText(this, "Error: Class not found", Toast.LENGTH_SHORT).show();
@@ -40,9 +44,9 @@ public class DetailsClassActivity extends AppCompatActivity {
         initializeViews();
         loadClassDetails(classId);
 
+        // Set click listeners for buttons
         editButton.setOnClickListener(v -> editClass(currentClass));
         deleteButton.setOnClickListener(v -> deleteClass(currentClass));
-
         homeIcon.setOnClickListener(v -> {
             Intent homeIntent = new Intent(DetailsClassActivity.this, MainActivity.class);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -51,6 +55,9 @@ public class DetailsClassActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the views in the activity.
+     */
     private void initializeViews() {
         homeIcon = findViewById(R.id.home_icon);
         courseNameTextView = findViewById(R.id.course_name);
@@ -62,6 +69,11 @@ public class DetailsClassActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.delete_button);
     }
 
+    /**
+     * Loads the details of the class based on the provided classId.
+     *
+     * @param classId The ID of the class to load.
+     */
     private void loadClassDetails(int classId) {
         classViewModel.getClass(classId).observe(this, yogaClass -> {
             if (yogaClass != null) {
@@ -71,6 +83,11 @@ public class DetailsClassActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays the details of the class in the respective TextViews.
+     *
+     * @param yogaClass The class object containing details to display.
+     */
     private void displayClassDetails(Class yogaClass) {
         courseNameTextView.setText(String.format("Course name: " + yogaClass.getCourseName()));
         classDateTextView.setText(String.format("Date: " + yogaClass.getCourseDay() + ", " + yogaClass.getDate()));
@@ -80,12 +97,22 @@ public class DetailsClassActivity extends AppCompatActivity {
                 yogaClass.getComments().isEmpty() ? "No Comments" : yogaClass.getComments()));
     }
 
+    /**
+     * Initiates the editing of the class.
+     *
+     * @param yogaClass The class object to edit.
+     */
     private void editClass(Class yogaClass) {
         Intent intent = new Intent(this, SaveClassActivity.class);
         intent.putExtra("class_id", yogaClass.getClassId());
         startActivity(intent);
     }
 
+    /**
+     * Deletes the specified class after user confirmation.
+     *
+     * @param yogaClass The class object to delete.
+     */
     private void deleteClass(Class yogaClass) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm Delete");

@@ -92,6 +92,9 @@ public class SaveClassActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the UI components.
+     */
     private void initializeViews() {
         datePicker = findViewById(R.id.date_picker);
         typeOfClassGroup = findViewById(R.id.type_of_class_group);
@@ -103,6 +106,9 @@ public class SaveClassActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancel_button);
     }
 
+    /**
+     * Sets up the date picker for selecting the class date.
+     */
     private void setupDatePicker() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -137,6 +143,12 @@ public class SaveClassActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Converts a day name to its corresponding Calendar constant.
+     *
+     * @param dayName The name of the day (e.g., "Monday").
+     * @return The corresponding Calendar constant for the day.
+     */
     private int getDayOfWeek(String dayName) {
         switch (dayName.toLowerCase(Locale.US)) {
             case "sunday":
@@ -158,6 +170,11 @@ public class SaveClassActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the selected type of class from the RadioGroup.
+     *
+     * @return The selected type of class ("Online" or "Offline").
+     */
     private String getSelectedTypeOfClass() {
         int selectedId = typeOfClassGroup.getCheckedRadioButtonId();
         if (selectedId == R.id.online_class) {
@@ -168,6 +185,9 @@ public class SaveClassActivity extends AppCompatActivity {
         return "";
     }
 
+    /**
+     * Validates the input fields and saves the class to the database.
+     */
     private void validateAndSaveClass() {
         String date = datePicker.getText().toString().trim();
         String typeOfClass = getSelectedTypeOfClass();

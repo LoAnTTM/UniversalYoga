@@ -14,6 +14,10 @@ import com.example.universalyoga.network.NetworkReceiver;
 import com.example.universalyoga.network.SyncService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * Main activity that serves as the entry point for the application.
+ * It manages the bottom navigation and displays the appropriate fragments.
+ */
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private NetworkReceiver networkReceiver;
@@ -27,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize sync service
         syncService = SyncService.getInstance(this);
 
-        // Register network receiver
+        // Register network receiver to listen for connectivity changes
         networkReceiver = new NetworkReceiver();
         registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Unregister the network receiver to prevent memory leaks
         if (networkReceiver != null) {
             unregisterReceiver(networkReceiver);
         }
