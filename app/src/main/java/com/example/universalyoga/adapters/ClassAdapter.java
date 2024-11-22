@@ -22,6 +22,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
 
     public interface OnClassClickListener {
         void onClassClick(Class yogaClass);
+
         void onDeleteClick(Class yogaClass);
     }
 

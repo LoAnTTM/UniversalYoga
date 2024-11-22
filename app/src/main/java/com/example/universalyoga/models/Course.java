@@ -69,7 +69,7 @@ public class Course {
 
     public String getCourseName() {
         return courseName;
-                  }
+    }
 
     public String getTypeOfClass() {
         return typeOfClass;
@@ -114,7 +114,7 @@ public class Course {
 
     public void setTypeOfClass(String typeOfClass) {
         this.typeOfClass = typeOfClass;
-    }    
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -122,7 +122,7 @@ public class Course {
 
     public void setDayOfWeek(String dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
-    }    
+    }
 
     public void setTimeOfCourse(String timeOfCourse) {
         this.timeOfCourse = timeOfCourse;

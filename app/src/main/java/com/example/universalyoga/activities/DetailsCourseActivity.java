@@ -3,7 +3,6 @@ package com.example.universalyoga.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,15 +10,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.universalyoga.MainActivity;
 import com.example.universalyoga.R;
 import com.example.universalyoga.adapters.ClassAdapter;
-import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Course;
 import com.example.universalyoga.models.Class;
 import com.example.universalyoga.viewmodels.ClassViewModel;
@@ -27,8 +23,6 @@ import com.example.universalyoga.viewmodels.CourseViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DetailsCourseActivity extends AppCompatActivity {
-    private static final String TAG = "DetailsCourseActivity";
-
     private TextView courseNameText, typeOfClassText, descriptionText, dayOfWeekText,
             timeOfCourseText, durationText, capacityText, priceText, skillLevelText;
     private Button editButton, deleteButton;
@@ -46,14 +40,11 @@ public class DetailsCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_course);
 
-        // Initialize views
         initializeViews();
 
-        // Initialize ViewModel
         courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
         classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
 
-        // Set up RecyclerView for classes
         classesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         classAdapter = new ClassAdapter(new ClassAdapter.OnClassClickListener() {
             @Override
@@ -80,26 +71,22 @@ public class DetailsCourseActivity extends AppCompatActivity {
             }
         }, true);
         classesRecyclerView.setAdapter(classAdapter);
-        
 
-         // Get course ID from intent
-         Intent intent = getIntent();
-         if (intent.hasExtra("course_id")) {
-             int courseId = intent.getIntExtra("course_id", -1);
-             Log.d(TAG, "Received course ID: " + courseId);
-             if (courseId != -1) {
-                 loadCourseDetails(courseId);
-             } else {
-                 Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
-                 finish();
-             }
-         }
-
+        Intent intent = getIntent();
+        if (intent.hasExtra("course_id")) {
+            int courseId = intent.getIntExtra("course_id", -1);
+            if (courseId != -1) {
+                loadCourseDetails(courseId);
+            } else {
+                Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
 
         editButton.setOnClickListener(v -> editCourse(currentCourse));
         deleteButton.setOnClickListener(v -> deleteCourse(currentCourse));
+        addClassButton.setOnClickListener(v -> startAddClassActivity(currentCourse));
 
-        // Set up home icon click listener
         homeIcon.setOnClickListener(v -> {
             Intent homeIntent = new Intent(DetailsCourseActivity.this, MainActivity.class);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -125,7 +112,6 @@ public class DetailsCourseActivity extends AppCompatActivity {
         editButton = findViewById(R.id.edit_course_button);
         deleteButton = findViewById(R.id.delete_course_button);
         addClassButton = findViewById(R.id.add_class_button);
-        addClassButton.setOnClickListener(v -> startAddClassActivity(currentCourse));
     }
 
     private void loadCourseDetails(int courseId) {
@@ -152,7 +138,6 @@ public class DetailsCourseActivity extends AppCompatActivity {
 
     private void editCourse(Course course) {
         Intent intent = new Intent(this, SaveCourseActivity.class);
-        Log.d(TAG, "Opening course details for ID: " + course.getCourseId());
         intent.putExtra("course_id", course.getCourseId());
         startActivity(intent);
     }

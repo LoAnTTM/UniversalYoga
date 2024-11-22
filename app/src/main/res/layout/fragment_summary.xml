@@ -6,5 +6,44 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Summary information"
+        android:textSize="27sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/course_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Courses: "
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/class_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Classes: "
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/revenue_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Revenue Potential: "
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/teacher_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Unique Teachers: "
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

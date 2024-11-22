@@ -1,28 +1,19 @@
 package com.example.universalyoga.activities;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.universalyoga.R;
-import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Class;
-import com.example.universalyoga.models.Course;
 import com.example.universalyoga.viewmodels.ClassViewModel;
 
 import java.util.Calendar;
@@ -32,7 +23,7 @@ public class SaveClassActivity extends AppCompatActivity {
     private TextView courseNameText, courseDayText;
     private EditText datePicker, teacherEdit, commentsEdit;
     private RadioGroup typeOfClassGroup;
-    private Button saveButton,cancelButton;
+    private Button saveButton, cancelButton;
     private ClassViewModel classViewModel;
     private int courseId;
     private Class currentClass;
@@ -44,10 +35,8 @@ public class SaveClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_class);
 
-        // Initialize ViewModel
         classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
 
-        // Initialize views
         initializeViews();
         setupDatePicker();
 
@@ -62,11 +51,11 @@ public class SaveClassActivity extends AppCompatActivity {
                         courseName = intent.getStringExtra("course_name");
                         courseDay = intent.getStringExtra("course_day");
                         if (courseName == null && courseDay == null) {
-                            courseNameText.setText("Course Name: " + yogaClass.getCourseName());
-                            courseDayText.setText("Day of week: " + yogaClass.getCourseDay());
+                            courseNameText.setText(String.format("Course Name: %s", yogaClass.getCourseName()));
+                            courseDayText.setText(String.format("Day of week: %s", yogaClass.getCourseDay()));   
                         } else {
-                            courseNameText.setText("Course Name: " + courseName);
-                            courseDayText.setText("Day of week: " + courseDay);
+                            courseNameText.setText(String.format("Course Name: %s", courseName));
+                            courseDayText.setText(String.format("Day of week: %s", courseDay));                   
                         }
                         datePicker.setText(yogaClass.getDate());
                         teacherEdit.setText(yogaClass.getTeacherName());
@@ -83,9 +72,8 @@ public class SaveClassActivity extends AppCompatActivity {
             courseId = intent.getIntExtra("course_id", -1);
             courseName = intent.getStringExtra("course_name");
             courseDay = intent.getStringExtra("course_day");
-            courseNameText.setText("Course Name: " + courseName);
-            courseDayText.setText("Day of week: " + courseDay);
-            Log.d(TAG, "Course ID tai Class: " + courseId);
+            courseNameText.setText(String.format("Course Name: %s", courseName));
+            courseDayText.setText(String.format("Day of week: %s", courseDay));
             if (courseId == -1) {
                 Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
             }
@@ -93,7 +81,6 @@ public class SaveClassActivity extends AppCompatActivity {
             Toast.makeText(this, "Error: Invalid parameters", Toast.LENGTH_SHORT).show();
         }
 
-        // Set up save button click listener
         saveButton.setOnClickListener(v -> validateAndSaveClass());
         cancelButton.setOnClickListener(view -> {
             new AlertDialog.Builder(this)
@@ -121,42 +108,35 @@ public class SaveClassActivity extends AppCompatActivity {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-    
+
         datePicker.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
-                SaveClassActivity.this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Create a Calendar object for the selected date
-                    Calendar selectedDate = Calendar.getInstance();
-                    selectedDate.set(selectedYear, selectedMonth, selectedDay);
-    
-                    // Get the day of the week for the selected date
-                    int selectedDayOfWeek = selectedDate.get(Calendar.DAY_OF_WEEK);
-    
-                    // Get the target day of the week based on courseDay
-                    int targetDayOfWeek = getDayOfWeek(courseDay);
-    
-                    // Check if the selected date matches the course day
-                    if (selectedDayOfWeek == targetDayOfWeek) {
-                        String formattedDate = String.format(Locale.US, "%02d-%02d-%04d",
-                                selectedDay, selectedMonth + 1, selectedYear);
-                        datePicker.setText(formattedDate);
-                    } else {
-                        // Show an error message if the selected day is invalid
-                        new AlertDialog.Builder(this)
-                                .setTitle("Invalid Date")
-                                .setMessage("Please select a " + courseDay)
-                                .setPositiveButton("OK", (dialog, which) -> {
-                                    datePicker.performClick();
-                                }).show();
-                    }
-                },
-                year, month, day);
+                    SaveClassActivity.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        Calendar selectedDate = Calendar.getInstance();
+                        selectedDate.set(selectedYear, selectedMonth, selectedDay);
+                        int selectedDayOfWeek = selectedDate.get(Calendar.DAY_OF_WEEK);
+                        int targetDayOfWeek = getDayOfWeek(courseDay);
+                        if (selectedDayOfWeek == targetDayOfWeek) {
+                            String formattedDate = String.format(Locale.US, "%02d-%02d-%04d",
+                                    selectedDay, selectedMonth + 1, selectedYear);
+                            datePicker.setText(formattedDate);
+                        } else {
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Invalid Date")
+                                    .setMessage("Please select a " + courseDay)
+                                    .setPositiveButton("OK", (dialog, which) -> {
+                                        datePicker.performClick();
+                                    }).show();
+                        }
+                    },
+                    year, month, day);
+            // Disable all dates before today
+            datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
             datePickerDialog.show();
         });
     }
-    
-    // Helper method to convert courseDay (e.g., "Sunday") to Calendar.DAY_OF_WEEK
+
     private int getDayOfWeek(String dayName) {
         switch (dayName.toLowerCase(Locale.US)) {
             case "sunday":
@@ -177,7 +157,6 @@ public class SaveClassActivity extends AppCompatActivity {
                 throw new IllegalArgumentException("Invalid day: " + dayName);
         }
     }
-    
 
     private String getSelectedTypeOfClass() {
         int selectedId = typeOfClassGroup.getCheckedRadioButtonId();
@@ -191,7 +170,7 @@ public class SaveClassActivity extends AppCompatActivity {
 
     private void validateAndSaveClass() {
         String date = datePicker.getText().toString().trim();
-        String typeOfClass = getSelectedTypeOfClass(); 
+        String typeOfClass = getSelectedTypeOfClass();
         String teacher = teacherEdit.getText().toString().trim();
         String comments = commentsEdit.getText().toString().trim();
 
@@ -202,13 +181,10 @@ public class SaveClassActivity extends AppCompatActivity {
         }
 
         if (currentClass == null) {
-            Log.d(TAG, "Current class: " + currentClass);
-            // Save new class
             Class newClass = new Class(courseId, courseName, courseDay, date, typeOfClass, teacher, comments);
             classViewModel.saveClass(newClass);
             Toast.makeText(this, "Class saved successfully", Toast.LENGTH_SHORT).show();
         } else {
-            // Update existing class
             currentClass.setCourseName(courseName);
             currentClass.setCourseDay(courseDay);
             currentClass.setDate(date);

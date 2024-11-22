@@ -1,27 +1,20 @@
 package com.example.universalyoga.activities;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.universalyoga.MainActivity;
 import com.example.universalyoga.R;
 import com.example.universalyoga.models.Class;
 import com.example.universalyoga.viewmodels.ClassViewModel;
 
 public class DetailsClassActivity extends AppCompatActivity {
-    private static final String TAG = "DetailsClassActivity";
     private ClassViewModel classViewModel;
     private int classId;
     private Class currentClass;
@@ -35,7 +28,6 @@ public class DetailsClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_class);
 
-        // Initialize ViewModel
         classViewModel = new ViewModelProvider(this).get(ClassViewModel.class);
 
         classId = getIntent().getIntExtra("class_id", -1);
@@ -51,7 +43,6 @@ public class DetailsClassActivity extends AppCompatActivity {
         editButton.setOnClickListener(v -> editClass(currentClass));
         deleteButton.setOnClickListener(v -> deleteClass(currentClass));
 
-        // Set up home icon click listener
         homeIcon.setOnClickListener(v -> {
             Intent homeIntent = new Intent(DetailsClassActivity.this, MainActivity.class);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -82,16 +73,15 @@ public class DetailsClassActivity extends AppCompatActivity {
 
     private void displayClassDetails(Class yogaClass) {
         courseNameTextView.setText(String.format("Course name: " + yogaClass.getCourseName()));
-        classDateTextView.setText(String.format("Date: "+ yogaClass.getCourseDay()+ ", " + yogaClass.getDate()));
-        classTypeTextView.setText(String.format("Class type: %s", yogaClass.getTypeOfClass()));
-        classTeacherTextView.setText(String.format("Teacher: %s", yogaClass.getTeacherName()));
-        classCommentsTextView.setText(String.format("Comments: %s", 
-            yogaClass.getComments().isEmpty() ? "No Comments" : yogaClass.getComments()));
+        classDateTextView.setText(String.format("Date: " + yogaClass.getCourseDay() + ", " + yogaClass.getDate()));
+        classTypeTextView.setText(String.format("Class type: " + yogaClass.getTypeOfClass()));
+        classTeacherTextView.setText(String.format("Teacher: " + yogaClass.getTeacherName()));
+        classCommentsTextView.setText(String.format("Comments: %s",
+                yogaClass.getComments().isEmpty() ? "No Comments" : yogaClass.getComments()));
     }
 
     private void editClass(Class yogaClass) {
         Intent intent = new Intent(this, SaveClassActivity.class);
-        Log.d(TAG, "Opening course ID: " + yogaClass.getCourseId());
         intent.putExtra("class_id", yogaClass.getClassId());
         startActivity(intent);
     }

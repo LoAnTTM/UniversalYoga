@@ -29,13 +29,6 @@ public class SyncService {
         return instance;
     }
 
-//     public void syncData() {
-//         if (NetworkUtils.isNetworkAvailable(context)) {
-//             syncCoursesToFirebase();
-//             syncClassesToFirebase();
-//         }
-//     }
-
     public void clearAndSyncFirebaseData() {
         firebaseDatabase.child("courses").removeValue()
                 .addOnSuccessListener(aVoid -> syncCoursesToFirebase());
@@ -72,11 +65,11 @@ public class SyncService {
         firebaseDatabase.child("classes").child(String.valueOf(classId)).removeValue();
     }
 
-    public void deleteAllCoursesFromFirebase(){
+    public void deleteAllCoursesFromFirebase() {
         firebaseDatabase.child("courses").removeValue();
     }
 
-    public void deleteAllClassesFromFirebase(){
+    public void deleteAllClassesFromFirebase() {
         firebaseDatabase.child("classes").removeValue();
     }
 }

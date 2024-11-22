@@ -3,7 +3,9 @@ package com.example.universalyoga.viewmodels;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
 import android.app.Application;
+import android.widget.Toast;
 
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Class;
@@ -47,6 +49,7 @@ public class ClassViewModel extends AndroidViewModel {
         new Thread(() -> {
             database.classDAO().deleteClass(yogaClass);
             syncService.deleteClassFromFirebase(yogaClass.getClassId());
+            Toast.makeText(getApplication(), "Class deleted successfully from local database and Firebase.", Toast.LENGTH_SHORT).show();
         }).start();
     }
 

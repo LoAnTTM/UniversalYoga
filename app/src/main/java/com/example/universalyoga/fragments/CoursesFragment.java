@@ -41,7 +41,7 @@ public class CoursesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_courses, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        courseAdapter = new CourseAdapter(courses,this::onCourseClick);
+        courseAdapter = new CourseAdapter(courses, this::onCourseClick);
         recyclerView.setAdapter(courseAdapter);
 
         courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
@@ -60,11 +60,11 @@ public class CoursesFragment extends Fragment {
         deleteAllButton = view.findViewById(R.id.delete_all_button);
         deleteAllButton.setOnClickListener(v -> {
             new AlertDialog.Builder(getContext())
-                .setTitle("Confirm Delete")
-                .setMessage("Are you sure you want to delete all courses and their related classes?")
-                .setPositiveButton("Yes", (dialog, which) -> deleteAllCoursesAndClasses())
-                .setNegativeButton("No", null)
-                .show();
+                    .setTitle("Confirm Delete")
+                    .setMessage("Are you sure you want to delete all courses and their related classes?")
+                    .setPositiveButton("Yes", (dialog, which) -> deleteAllCoursesAndClasses())
+                    .setNegativeButton("No", null)
+                    .show();
         });
 
         return view;
@@ -82,7 +82,7 @@ public class CoursesFragment extends Fragment {
         new Thread(() -> {
             classViewModel.deleteAllClasses();
             courseViewModel.deleteAllCourses();
-    
+
             getActivity().runOnUiThread(() -> {
                 Toast.makeText(getContext(), "All courses and related classes deleted successfully", Toast.LENGTH_SHORT).show();
             });

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import com.example.universalyoga.database.YogaDatabase;
 import com.example.universalyoga.models.Class;
@@ -42,33 +43,19 @@ public class CourseViewModel extends AndroidViewModel {
         }).start();
     }
 
-    //  public void deleteCourse(Course course) {
-    //     new Thread(() -> {
-    //         database.courseDAO().deleteCourse(course);
-    //         syncService.deleteCourseFromFirebase(course.getCourseId());
-    //     }).start();
-    //  }
-
-     public void deleteCourse(Course course) {
+    public void deleteCourse(Course course) {
         new Thread(() -> {
             // Fetch all classes associated with the course
             List<Class> classes = database.classDAO().getAllClassesByCourseIdSync(course.getCourseId());
-    
-            // Delete each class from the Room database
+
             for (Class yogaClass : classes) {
                 database.classDAO().deleteClass(yogaClass);
-                if (NetworkUtils.isNetworkAvailable(getApplication())) {
-                    syncService.deleteClassFromFirebase(yogaClass.getClassId());
-                }
+                syncService.deleteClassFromFirebase(yogaClass.getClassId());
+                Toast.makeText(getApplication(), "Class deleted successfully from local database and Firebase.", Toast.LENGTH_SHORT).show();
             }
-    
-            // Delete the course from the Room database
             database.courseDAO().deleteCourse(course);
-    
-            // Delete the course from Firebase
-            if (NetworkUtils.isNetworkAvailable(getApplication())) {
-                syncService.deleteCourseFromFirebase(course.getCourseId());
-            }
+            syncService.deleteCourseFromFirebase(course.getCourseId());
+            Toast.makeText(getApplication(), "Course deleted successfully from local database and Firebase.", Toast.LENGTH_SHORT).show();
         }).start();
     }
 

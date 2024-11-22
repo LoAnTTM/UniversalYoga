@@ -5,7 +5,6 @@ import static android.content.ContentValues.TAG;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +16,7 @@ import android.widget.TimePicker;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
+
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,20 +52,16 @@ public class SaveCourseActivity extends AppCompatActivity {
 
         database = YogaDatabase.getDatabase(this);
 
-        // Initialize views
         initializeViews();
         setupChipGroup();
         setupDurationPicker();
         setupCapacitySlider();
 
-        // Initialize ViewModel
         courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
 
-        // Get task data from the intent
         Intent intent = getIntent();
         if (intent.hasExtra("course_id")) {
             int courseId = intent.getIntExtra("course_id", -1);
-            Log.d(TAG, "Received course ID: " + courseId);
             if (courseId != -1) {
                 courseViewModel.getCourse(courseId).observe(this, course -> {
                     if (course != null) {
@@ -87,14 +83,13 @@ public class SaveCourseActivity extends AppCompatActivity {
                         capacityValueText.setText(String.valueOf(course.getCapacity()));
                         pricePerClassEdit.setText(String.valueOf(course.getPricePerClass()));
                         skillLevelSpinner.setSelection(setSkillLevel(course.getSkillLevel()));
-                    }else {
+                    } else {
                         Toast.makeText(this, "Course not found", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         }
 
-        // Set up save button click listener
         saveButton.setOnClickListener(v -> validateAndSaveCourse());
         cancelButton.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
@@ -149,21 +144,15 @@ public class SaveCourseActivity extends AppCompatActivity {
     private String getTimeFromPicker() {
         int hour = timePicker.getHour();
         int minute = timePicker.getMinute();
-
-        // Convert 24 hour time to 12 hour format with AM/PM
         String amPm = hour >= 12 ? "PM" : "AM";
         int hour12 = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-
-        // Format time as hh:mm AM/PM
         return String.format(Locale.getDefault(), "%02d:%02d %s", hour12, minute, amPm);
     }
 
     private void setupDurationPicker() {
         durationPicker.setMinValue(30);
-        durationPicker.setMaxValue(180); // (3 hours)
-        durationPicker.setValue(60);
-
-        // Set step size to 15 minutes
+        durationPicker.setMaxValue(180);
+        durationPicker.setValue(30);
         durationPicker.setFormatter(value -> String.format("%d min", value));
     }
 
@@ -171,7 +160,7 @@ public class SaveCourseActivity extends AppCompatActivity {
         capacitySlider.addOnChangeListener((slider, value, fromUser) -> {
             if (capacityValueText != null) {
                 capacityValueText.setText(String.format(Locale.getDefault(),
-                    "Selected: %d people", (int) value));
+                        "Selected: %d people", (int) value));
             }
         });
     }
@@ -192,16 +181,14 @@ public class SaveCourseActivity extends AppCompatActivity {
         priceStr = decimalFormat.format(price);
         price = Double.parseDouble(priceStr);
 
-        // Validate required fields
         if (courseName.isEmpty() || typeOfClass.isEmpty() || dayOfWeek.isEmpty() ||
-            timeOfCourse.isEmpty() || priceStr.isEmpty()) {
+                timeOfCourse.isEmpty() || priceStr.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields",
-                Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
         if (currentCourse == null) {
-            //Save new course
             Course newCourse = new Course(
                     courseName,
                     typeOfClass,
@@ -230,7 +217,6 @@ public class SaveCourseActivity extends AppCompatActivity {
                 }
             }).start();
         } else {
-            // Update existing course
             currentCourse.setCourseName(courseName);
             currentCourse.setTypeOfClass(typeOfClass);
             currentCourse.setDescription(description);

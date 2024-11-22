@@ -54,7 +54,7 @@ public class ClassesFragment extends Fragment {
         classViewModel.getAllClasses().observe(getViewLifecycleOwner(), classes -> {
             classAdapter.setClasses(classes);
         });
-        
+
         classSearchView = view.findViewById(R.id.class_search_view);
         classSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

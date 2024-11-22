@@ -7,4 +7,8 @@
         android:id="@+id/nav_classes"
         android:icon="@drawable/baseline_class_24"
         android:title="Classes" />
+    <item
+        android:id="@+id/nav_summary"
+        android:icon="@drawable/baseline_summarize_24"
+        android:title="Summary" />
 </menu>
